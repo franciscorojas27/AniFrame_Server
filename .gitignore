@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+hls
+videos
+.env
+
 # testing
 /coverage
 
@@ -40,3 +44,6 @@ yarn-error.log*
 **/*.log
 package-lock.json
 **/*.bun
+
+converter/*
+covers/*

@@ -1,15 +1,20 @@
 {
-  "name": "iptv-bun",
-  "version": "1.0.50",
+  "name": "anime-tv",
+  "type": "module",
+  "author": {
+    "name": "Francisco Rojas"
+  },
+  "description": "Server Void working with Bun and Elysia",
+  "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/static": "^1.4.0",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "^1.2.22"
   },
   "module": "src/index.js"
 }
