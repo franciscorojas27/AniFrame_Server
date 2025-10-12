@@ -1,7 +1,0 @@
-#EXTM3U
-
-#EXTINF:-1 tvg-id="Channel1" tvg-name="Channel 1" tvg-logo="http://172.16.0.7:3000/covers/test.png" group-title="Entertainment",Channel 1
-http://172.16.0.7:3000/hls/test.m3u8
-
-#EXTINF:-1 tvg-id="Canal2" tvg-name="Canal 2" tvg-logo="http://172.16.0.7:3000/covers/test.png" group-title="Entertainment",Canal 2
-http://example.com/stream2.m3u8

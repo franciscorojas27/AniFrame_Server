@@ -1,20 +1,21 @@
 {
   "name": "anime-tv",
   "type": "module",
+  "main": "./src/main.ts",
   "author": {
     "name": "Francisco Rojas"
   },
   "description": "Server Void working with Bun and Elysia",
   "version": "1.0.0",
   "scripts": {
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/main.ts"
   },
   "dependencies": {
     "@elysiajs/static": "^1.4.0",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "^1.2.22"
+    "bun-types": "^1.2.23"
   },
-  "module": "src/index.js"
+  "module": "src/main.ts"
 }

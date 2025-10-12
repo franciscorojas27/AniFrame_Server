@@ -11,7 +11,8 @@ videos
 
 # testing
 /coverage
-
+# plugins
+/plugins/**/*
 # next.js
 /.next/
 /out/
