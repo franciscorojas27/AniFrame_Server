@@ -1,10 +1,3 @@
-export type anime = {
-  name: string;
-  cap: string;
-  url: string;
-  urlImg: string | null;
-};
-
 export type animeCatalog = {
   animeId: string;
   name: string;

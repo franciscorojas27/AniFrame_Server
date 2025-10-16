@@ -1,11 +1,12 @@
-import { ExeManager } from "./infrastructure/cli/CLIProcess_alive";
-
-export const exeManager = new ExeManager();
-
 import { ManifestClient } from "./infrastructure/cli/ManifestClient";
 import { SQLITE } from "./infrastructure/database/dataBaseClient";
 import { mainServer } from "./infrastructure/http/server";
 import { manifestAgreement } from "./shared/types/agreement";
+import os from "os";
+import { io } from "socket.io-client";
+import path from "path";
+import fs from "fs";
+Bun.spawn([path.join(process.cwd(), "plugins", "animeav1.exe")]);
 
 await SQLITE`
   CREATE TABLE IF NOT EXISTS cache (
@@ -50,5 +51,29 @@ if (manifestDB.length === 0) {
     `;
   }
 }
+
+const pathPluginPort = path.join(os.tmpdir(), "animeav1", "config.json");
+const config = JSON.parse(fs.readFileSync(pathPluginPort, "utf-8"));
+
+let port = config.port;
+let socket = io("http://localhost:" + port);
+socket.on("connect", () => {
+  console.log("✅ Connected to scraper server webSocket");
+});
+
+export const sendMessage = async (
+  command: string,
+  message: object
+): Promise<{ success: boolean, content: any }> => {
+  return new Promise((resolve, reject) => {
+    socket.emit(command, message, (response: any) => {
+      resolve(response);
+    });
+  });
+};
+
+socket.on("disconnect", () => {
+  console.log("❌ Disconnected from scraper server webSocket");
+});
 
 mainServer;

@@ -5,6 +5,9 @@ describe("Anime API", () => {
     const data = await mainServer
       .handle(new Request("http://localhost:3000/anime/home"))
       .then((res) => res.json());
-    expect(data.message).toBe("Welcome to Anime API");
+    expect(data).toBeArray();
+    expect(data).toHaveLength(20);
+    expect(data[0]).toHaveProperty("name");
   });
 });
+ 

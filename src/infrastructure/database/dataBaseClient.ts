@@ -8,4 +8,3 @@ export const SQLITE = new SQL({
   create: true,
   readwrite: true,
 });
-  
