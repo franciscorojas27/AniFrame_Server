@@ -1,79 +1,141 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useScale } from '@/hooks/useScale';
+import {
+  Text,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  Dimensions,
+  Platform,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Animated,
+} from "react-native";
+import { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
-  const styles = useHomeScreenStyles();
+  const [animeList, setAnimeList] = useState<
+    { animeId: string; cap: string; name: string; url: string; urlImg: string }[]
+  >([]);
+
+  useEffect(() => {
+    fetch("http://172.16.0.7:3000/anime/home")
+      .then((res) => res.json())
+      .then((data) => setAnimeList(data));
+  }, []);
+  const [layout, setLayout] = useState({ width: 0, height: 0, x: 0, y: 0 });
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
+    const width = layout.width / (Platform.isTV ? 4 : 1) - 20;
+    const slug = new URL(item.url).pathname.split('/')[2].toString();
+    return (
+      <TouchableOpacity
+        focusable={true}
+        accessibilityShowsLargeContentViewer={false}
+        hasTVPreferredFocus={index === 0}
+        nextFocusDown={index + 1 < animeList.length ? index + 1 : 0}
+        style={[styles.itemContainer, { width }]}
+      >
+        <Link href={{ pathname: '/video/[slug]/[id]', params: { slug, id: item.cap } }} style={styles.linkContainer}>
+          <Image source={{ uri: item.urlImg }} style={styles.image} />
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.cap}>{item.cap}</Text>
+        </Link>
+      </TouchableOpacity >
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView onLayout={(event) => {
+      const { x, y, width, height } = event.nativeEvent.layout;
+      setLayout({ x, y, width, height });
+    }} style={styles.container} >
+      {animeList.length > 0 ? (
+        <FlatList
+          style={{ width: "100%" }}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          data={animeList}
+          numColumns={Platform.isTV ? 4 : 1}
+          contentContainerStyle={[
+            styles.flatListContent,
+            { paddingBottom: Platform.isTV ? 0 : 100 },
+          ]}
+          keyExtractor={(item) => item.animeId}
+          renderItem={renderItem}
+          removeClippedSubviews={false}
+          ListHeaderComponent={
+            <Text style={styles.header}>Explore</Text>
+          }
         />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{' '}
-          to see changes. Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{' '}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{' '}
-          directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      ) : (
+        <View style={styles.placeholder}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
-
-const useHomeScreenStyles = function () {
-  const scale = useScale();
-  return StyleSheet.create({
-    titleContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8 * scale,
-    },
-    stepContainer: {
-      gap: 8 * scale,
-      marginBottom: 8 * scale,
-    },
-    reactLogo: {
-      height: 178 * scale,
-      width: 290 * scale,
-      bottom: 0,
-      left: 0,
-      position: 'absolute',
-    },
-  });
-};
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "#121212",
+  },
+  placeholder: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  header: {
+    textAlign: "center",
+    fontSize: 28,
+    marginTop: 20,
+    marginBottom: 20,
+    fontWeight: "800",
+    color: "#ffffff",
+  },
+  flatListContent: {
+    paddingHorizontal: 12,
+  },
+  itemContainer: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginHorizontal: Platform.isTV ? 6 : 0,
+    marginBottom: 10,
+    borderRadius: 16,
+    backgroundColor: "#1f1f1f",
+    padding: 12,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 0,
+    overflow: "hidden",
+  },
+  linkContainer: {
+    alignItems: "center",
+  },
+  image: {
+    width: 110,
+    height: 110,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  name: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#ffffff",
+    textAlign: "center",
+  },
+  cap: {
+    fontSize: 14,
+    color: "#b0b0b0",
+    textAlign: "center",
+    marginTop: 2,
+  },
+});

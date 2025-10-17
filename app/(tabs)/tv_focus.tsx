@@ -23,7 +23,7 @@ export default function FocusDemoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">TV event handling demo</ThemedText>
+        <ThemedText type="title">TV event handling demo que yo sepa</ThemedText>
       </ThemedView>
       <ThemedText>
         Demo of focus handling and TV remote event handling in{' '}

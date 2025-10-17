@@ -20,13 +20,15 @@
       "expo-router",
       "expo-font",
       "expo-build-properties",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-video"
     ],
     "android": {
       "edgeToEdgeEnabled": true,
       "splash": {
         "image": "./assets/images/splash.png"
-      }
+      },
+      "package": "com.anonymous.AniFrame"
     },
     "ios": {
       "splash": {
