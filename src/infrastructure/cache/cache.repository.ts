@@ -32,6 +32,10 @@ export class CacheRepository implements ICacheRepository {
     `;
     return;
   }
+  public async delete(key: string): Promise<void> {
+    await this.db`DELETE FROM cache WHERE id = ${key}`;
+    return;
+  }
   public clear(): Promise<void> {
     return this
       .db`DELETE FROM cache WHERE createdAt <= datetime('now', '-${CACHE_TTL} milliseconds')  `;

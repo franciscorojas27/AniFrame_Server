@@ -6,6 +6,7 @@ import os from "os";
 import { io } from "socket.io-client";
 import path from "path";
 import fs from "fs";
+import { CacheRepository } from "./infrastructure/cache/cache.repository";
 Bun.spawn([path.join(process.cwd(), "plugins", "animeav1.exe")]);
 
 await SQLITE`
@@ -75,5 +76,5 @@ export const sendMessage = async (
 socket.on("disconnect", () => {
   console.log("❌ Disconnected from scraper server webSocket");
 });
-
+export const cacheRepository = CacheRepository.create();
 mainServer;

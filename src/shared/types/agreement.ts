@@ -1,10 +1,5 @@
 import { WeekDay, AnimeScheduleItem, animeCatalog } from "./anime.js";
 
-export type M3U8 = {
-  foundUrl?: string;
-  cap: string;
-};
-
 export type AnimeDetails = {
   idAnime: string | undefined;
   name: string;

@@ -1,5 +1,4 @@
 import { t } from 'elysia'
-
 export const animeHomeEntity = t.Object({
     animeId: t.String(),
     name: t.String(),
