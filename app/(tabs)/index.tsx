@@ -1,18 +1,16 @@
 import {
   Text,
   Image,
-  FlatList,
+  View,
   ActivityIndicator,
-  Dimensions,
   Platform,
   TouchableOpacity,
   StyleSheet,
-  View,
-  Animated,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { FlashList } from "@shopify/flash-list";
 
 export default function HomeScreen() {
   const [animeList, setAnimeList] = useState<
@@ -24,48 +22,62 @@ export default function HomeScreen() {
       .then((res) => res.json())
       .then((data) => setAnimeList(data));
   }, []);
-  const [layout, setLayout] = useState({ width: 0, height: 0, x: 0, y: 0 });
+
+  const sortedAnimeList = useMemo(() => {
+    const list = [...animeList];
+    list.sort((a, b) => {
+      const aCap = parseFloat(a.cap);
+      const bCap = parseFloat(b.cap);
+      if (!Number.isNaN(aCap) && !Number.isNaN(bCap)) {
+        const byCap = bCap - aCap;
+        if (byCap !== 0) return byCap;
+      }
+      return a.name.localeCompare(b.name);
+    });
+    return list;
+  }, [animeList]);
+
+  const columns = Platform.isTV ? 4 : 2;
+
   const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const width = layout.width / (Platform.isTV ? 4 : 1) - 20;
-    const slug = new URL(item.url).pathname.split('/')[2].toString();
+    const slug = new URL(item.url).pathname.split("/")[2].toString();
+
     return (
-      <TouchableOpacity
-        focusable={true}
-        accessibilityShowsLargeContentViewer={false}
-        hasTVPreferredFocus={index === 0}
-        nextFocusDown={index + 1 < animeList.length ? index + 1 : 0}
-        style={[styles.itemContainer, { width }]}
-      >
-        <Link href={{ pathname: '/video/[slug]/[id]', params: { slug, id: item.cap } }} style={styles.linkContainer}>
+      <Link
+        href={{ pathname: "/video/[slug]/[id]", params: { slug, id: item.cap } }}
+        asChild
+     >
+        <TouchableOpacity
+          focusable={true}
+          hasTVPreferredFocus={index === 0}
+          style={styles.itemContainer}
+        >
           <Image source={{ uri: item.urlImg }} style={styles.image} />
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.cap}>{item.cap}</Text>
-        </Link>
-      </TouchableOpacity >
+          <View style={styles.textContainer}>
+            <Text style={styles.name} numberOfLines={2}>
+              {item.name}
+            </Text>
+            <Text style={styles.cap}>{`Episode ${item.cap}`}</Text>
+          </View>
+        </TouchableOpacity>
+      </Link>
     );
   };
 
   return (
-    <SafeAreaView onLayout={(event) => {
-      const { x, y, width, height } = event.nativeEvent.layout;
-      setLayout({ x, y, width, height });
-    }} style={styles.container} >
+    <SafeAreaView style={styles.container}>
       {animeList.length > 0 ? (
-        <FlatList
-          style={{ width: "100%" }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          data={animeList}
-          numColumns={Platform.isTV ? 4 : 1}
-          contentContainerStyle={[
-            styles.flatListContent,
-            { paddingBottom: Platform.isTV ? 0 : 100 },
-          ]}
-          keyExtractor={(item) => item.animeId}
+        <FlashList
+          style={styles.flatlistContainer}
+          data={sortedAnimeList}
           renderItem={renderItem}
-          removeClippedSubviews={false}
+          keyExtractor={(item) => item.animeId}
+          numColumns={columns}
+          contentContainerStyle={styles.flatListContent}
           ListHeaderComponent={
-            <Text style={styles.header}>Explore</Text>
+            <View style={styles.headerView}>
+              <Text style={styles.headerText}>Mi Header</Text>
+            </View>
           }
         />
       ) : (
@@ -76,66 +88,65 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
+  flatlistContainer: {
+    flex: 1,
+    marginBottom: Platform.isTV ? 0 : 85,
+  },
+  headerView: {
+    alignItems: "center",
+    marginVertical: 10
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#ff0000ff",
+    padding: 12,
+  },
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
     backgroundColor: "#121212",
   },
   placeholder: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-  },
-  header: {
-    textAlign: "center",
-    fontSize: 28,
-    marginTop: 20,
-    marginBottom: 20,
-    fontWeight: "800",
-    color: "#ffffff",
   },
   flatListContent: {
-    paddingHorizontal: 12,
   },
   itemContainer: {
-    justifyContent: 'center',
-    flexDirection: 'row',
-    marginHorizontal: Platform.isTV ? 6 : 0,
-    marginBottom: 10,
-    borderRadius: 16,
-    backgroundColor: "#1f1f1f",
-    padding: 12,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.5,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 12,
-    elevation: 8,
-    borderWidth: 0,
+    flex: 1,
+    margin: 6,
+    borderRadius: 12,
+    backgroundColor: "#141414",
     overflow: "hidden",
+    alignItems: "center",
+    padding: 8,
   },
   linkContainer: {
+    width: "100%",
     alignItems: "center",
   },
   image: {
-    width: 110,
-    height: 110,
-    borderRadius: 12,
+    width: "100%",
+    height: 200,
+    aspectRatio: 16 / 9, 
+    borderRadius: 8,
     marginBottom: 8,
   },
+  textContainer: {
+    width: "100%",
+    paddingHorizontal: 6,
+  },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "700",
-    color: "#ffffff",
-    textAlign: "center",
+    color: "#fff",
+    marginBottom: 4,
   },
   cap: {
-    fontSize: 14,
-    color: "#b0b0b0",
-    textAlign: "center",
-    marginTop: 2,
+    fontSize: 13,
+    color: "#bdbdbd",
   },
 });

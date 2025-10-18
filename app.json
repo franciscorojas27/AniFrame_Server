@@ -19,7 +19,14 @@
       ],
       "expo-router",
       "expo-font",
-      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       "expo-web-browser",
       "expo-video"
     ],
@@ -45,6 +52,12 @@
     },
     "newArchEnabled": true,
     "name": "AniFrame",
-    "slug": "AniFrame"
+    "slug": "AniFrame",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7991cc2c-3cea-409f-8190-7b8e79676383"
+      }
+    }
   }
 }

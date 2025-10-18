@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, Pressable } from 'react-native';
-import { Colors } from '@/constants/Colors';
+import { Platform, Text, Pressable, StyleSheet } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useTextStyles } from '@/hooks/useTextStyles';
 
@@ -30,8 +29,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        tabBarActiveBackgroundColor: Colors[colorScheme ?? 'light'].background,
+        tabBarActiveTintColor: '#ff0000ff',
+        tabBarActiveBackgroundColor: '#000000',
         tabBarStyle: {
           width: '100%',
         },
@@ -41,6 +40,9 @@ export default function TabLayout() {
           width: 0,
         },
         headerShown: false,
+        tabBarIcon({ focused, color, size }) {
+          return true;
+        }
       }}
     >
       <Tabs.Screen
@@ -49,7 +51,7 @@ export default function TabLayout() {
           title: 'Home',
           tabBarButton,
           tabBarLabelStyle: textStyles.default,
-          tabBarIcon: () => null,
+          tabBarIcon: ({ color, size }: any) => null,
         }}
       />
       <Tabs.Screen
@@ -66,16 +68,24 @@ export default function TabLayout() {
         options={
           Platform.OS === 'web'
             ? {
-                href: null,
-              }
+              href: null,
+            }
             : {
-                title: 'TV demo',
-                tabBarButton,
-                tabBarLabelStyle: textStyles.default,
-                tabBarIcon: () => null,
-              }
+              title: 'TV demo',
+              tabBarButton,
+              tabBarLabelStyle: styles.default,
+              tabBarIcon: () => null,
+            }
         }
       />
     </Tabs>
   );
 }
+
+
+const styles = StyleSheet.create({
+  default: {
+    fontFamily: 'System',
+    fontSize: 16,
+  }
+})

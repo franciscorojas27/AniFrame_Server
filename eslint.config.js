@@ -9,7 +9,7 @@ export default defineConfig([
         // Usas 'extends' para referenciar la configuración del plugin por su alias
         extends: [
             // El formato es '<alias-del-plugin>/<nombre-de-la-config>'
-            'standard', 
+            '/node_modules/standard/eslintrc.json', 
         ],
         languageOptions: {
             sourceType: "module",

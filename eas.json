@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 3.15.1"
+    "version": ">= 3.15.1",
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -41,6 +42,10 @@
     },
     "production": {},
     "production_tv": {
+      "android": {
+        "buildType": "apk"
+      },
+      "autoIncrement": false,
       "extends": "production", 
       "env": {
         "EXPO_TV": "1"
