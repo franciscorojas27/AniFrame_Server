@@ -1,11 +1,11 @@
 import Elysia, { t } from "elysia";
-import { CacheRepository } from "../../cache/cache.repository";
-import { SQLITE } from "../../database/dataBaseClient";
-import { sendMessage } from "../../../main";
 import { AnimeHomeService } from "../../../core/services/animeHome.service";
 import { animeHomeEntity, animeHomeInvalid } from "../../../core/entities/animeHome.entity";
 import { animeVideoEntity } from "../../../core/entities/animeVideo.entity";
 import { AnimeVideoService } from "../../../core/services/animeVideo.service";
+import { animeFilter } from "../../../core/entities/animeFilter.entity";
+import { animeSearch, AnimeSearchEntity } from "../../../core/entities/animeSearch.entity";
+import { AnimeSearchService } from "../../../core/services/animeSearch.service";
 
 
 export const animeRoutes = new Elysia({ prefix: "/anime" });
@@ -35,3 +35,23 @@ animeRoutes.get("/video/:id/:cap", async ({ params: { id, cap } }) => {
     500: animeVideoEntity.animeVideoInvalid
   }
 });
+
+animeRoutes.get('/search', async ({ query }) => {
+  const { status, genres, category, querySearch, page } = query;
+  const result = await AnimeSearchService.getSearchAnimeResults(querySearch, page, {
+    genres,
+    status,
+    category
+  });
+  return result;
+}, {
+  query: t.Object({
+    querySearch: t.String(),
+    page: t.Optional(t.Number()),
+    ...animeFilter.properties
+  }),
+  response: t.Object({
+    results: t.Array(AnimeSearchEntity),
+    numberPages: t.Number()
+  }),
+})
