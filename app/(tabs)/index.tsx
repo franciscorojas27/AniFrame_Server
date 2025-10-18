@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -46,7 +47,7 @@ export default function HomeScreen() {
       <Link
         href={{ pathname: "/video/[slug]/[id]", params: { slug, id: item.cap } }}
         asChild
-     >
+      >
         <TouchableOpacity
           focusable={true}
           hasTVPreferredFocus={index === 0}
@@ -66,25 +67,28 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {animeList.length > 0 ? (
-        <FlashList
-          style={styles.flatlistContainer}
-          data={sortedAnimeList}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.animeId}
-          numColumns={columns}
-          contentContainerStyle={styles.flatListContent}
-          ListHeaderComponent={
-            <View style={styles.headerView}>
-              <Text style={styles.headerText}>Mi Header</Text>
-            </View>
-          }
-        />
-      ) : (
-        <View style={styles.placeholder}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
+    
+      {
+        animeList.length > 0 ? (
+          <FlashList
+            style={styles.flatlistContainer}
+            data={sortedAnimeList}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.animeId}
+            numColumns={columns}
+            contentContainerStyle={styles.flatListContent}
+            ListHeaderComponent={
+              <View style={styles.headerView}>
+                <Text style={styles.headerText}>Mi Header</Text>
+              </View>
+            }
+          />
+        ) : (
+          <View style={styles.placeholder}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )
+      }
     </SafeAreaView>
   );
 }
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: 200,
-    aspectRatio: 16 / 9, 
+    aspectRatio: 16 / 9,
     borderRadius: 8,
     marginBottom: 8,
   },
