@@ -10,7 +10,7 @@ export default function VideoScreen() {
     console.log(data);
     const videoSource: VideoSource = {
         uri: data?.foundUrl || "",
-        contentType: "auto",
+        contentType: data?.foundUrl.includes("m3u8") ? "hls" : "auto",
         useCaching: true,
     };
     const player = useVideoPlayer(videoSource);

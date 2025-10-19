@@ -31,6 +31,9 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        freezeOnBlur: true,           // ⚡ bloquea interacción sin desmontar
+        lazy: true,                   // carga solo cuando se enfoca
+        headerShown: false,
         tabBarActiveTintColor: '#ff0000ff',
         tabBarActiveBackgroundColor: '#000000ff',
         tabBarBackground() {
@@ -55,7 +58,6 @@ export default function TabLayout() {
           height: textStyles.title.lineHeight,
           width: 0,
         },
-        headerShown: false,
         tabBarIcon({ focused, color, size }) {
           return true;
         }
@@ -82,7 +84,7 @@ export default function TabLayout() {
           tabBarLabelStyle: textStyles.default,
           tabBarIcon: ({ color, size }: any) => null,
         }}
-      />|
+      />
       <Tabs.Screen
         name="explore"
         options={{

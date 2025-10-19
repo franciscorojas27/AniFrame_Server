@@ -10,10 +10,12 @@ import {
 } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, usePathname } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 
 export default function HomeScreen() {
+  const pathname = usePathname();
+  const isFocused = pathname === "/";
   const [animeList, setAnimeList] = useState<
     { animeId: string; cap: string; name: string; url: string; urlImg: string }[]
   >([]);
@@ -45,12 +47,15 @@ export default function HomeScreen() {
 
     return (
       <Link
+        screenReaderFocusable={isFocused}
+        importantForAccessibility={isFocused ? "auto" : "no-hide-descendants"}
+        accessible={isFocused}
         href={{ pathname: "/video/[slug]/[id]", params: { slug, id: item.cap } }}
         asChild
       >
         <TouchableOpacity
-          focusable={true}
-          hasTVPreferredFocus={index === 0}
+          focusable={isFocused}
+          hasTVPreferredFocus={isFocused && index === 0}
           style={styles.itemContainer}
         >
           <Image source={{ uri: item.urlImg }} style={styles.image} />
@@ -66,29 +71,30 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-    
-      {
-        animeList.length > 0 ? (
-          <FlashList
-            style={styles.flatlistContainer}
-            data={sortedAnimeList}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.animeId}
-            numColumns={columns}
-            contentContainerStyle={styles.flatListContent}
-            ListHeaderComponent={
-              <View style={styles.headerView}>
-                <Text style={styles.headerText}>Mi Header</Text>
-              </View>
-            }
-          />
-        ) : (
-          <View style={styles.placeholder}>
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        )
-      }
+    <SafeAreaView
+      style={styles.container}
+      focusable={false}
+      importantForAccessibility={isFocused ? "auto" : "no-hide-descendants"} // bloquea foco si no está activa
+    >
+      {animeList.length > 0 ? (
+        <FlashList
+          style={styles.flatlistContainer}
+          data={sortedAnimeList}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.animeId}
+          numColumns={columns}
+          contentContainerStyle={styles.flatListContent}
+          ListHeaderComponent={
+            <View style={styles.headerView}>
+              <Text style={styles.headerText}>Mi Header</Text>
+            </View>
+          }
+        />
+      ) : (
+        <View style={styles.placeholder}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -100,7 +106,7 @@ const styles = StyleSheet.create({
   },
   headerView: {
     alignItems: "center",
-    marginVertical: 10
+    marginVertical: 10,
   },
   headerText: {
     fontSize: 24,
@@ -117,8 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  flatListContent: {
-  },
+  flatListContent: {},
   itemContainer: {
     flex: 1,
     margin: 6,
@@ -127,10 +132,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     alignItems: "center",
     padding: 8,
-  },
-  linkContainer: {
-    width: "100%",
-    alignItems: "center",
   },
   image: {
     width: "100%",

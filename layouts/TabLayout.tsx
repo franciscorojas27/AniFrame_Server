@@ -8,7 +8,10 @@ export default function TabLayout() {
     return <WebTabLayout />;
   }
   return (
-    <NativeTabs>
+    <NativeTabs
+      // Prevent accidental swipe or DPAD right from switching tabs on TV
+      // Note: NativeTabs doesn't expose swipeEnabled prop; rely on focus trapping per screen
+    >
       <NativeTabs.Trigger name="index">
         <Label>Home</Label>
         <Icon sf="house" />
