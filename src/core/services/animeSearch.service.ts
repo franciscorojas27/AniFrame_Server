@@ -25,6 +25,7 @@ export abstract class AnimeSearchService {
                     status: filter?.status,
                 }
             });
+            console.log(animeClient);
         } catch (err) {
             throw status(500, { error: "Failed to fetch anime list from source" });
         }

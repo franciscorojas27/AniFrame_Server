@@ -8,7 +8,7 @@ import path from "path";
 import fs from "fs";
 import { CacheRepository } from "./infrastructure/cache/cache.repository";
 Bun.spawn([path.join(process.cwd(), "plugins", "animeav1.exe")]);
-
+ 
 await SQLITE`
   CREATE TABLE IF NOT EXISTS cache (
     id TEXT PRIMARY KEY NOT NULL,
