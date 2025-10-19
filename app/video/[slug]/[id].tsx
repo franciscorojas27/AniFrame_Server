@@ -7,10 +7,10 @@ export default function VideoScreen() {
     const [data, setData] = useState<{ cap: string; foundUrl: string }>();
     const videoViewRef = useRef<VideoView>(null);
     const { slug, id } = useLocalSearchParams();
-
+    console.log(data);
     const videoSource: VideoSource = {
         uri: data?.foundUrl || "",
-        contentType: "hls",
+        contentType: "auto",
         useCaching: true,
     };
     const player = useVideoPlayer(videoSource);
