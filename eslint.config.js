@@ -1,4 +1,3 @@
-// eslint.config.js
 export default [
   {
     files: ['**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx', '**/*.vue'],
