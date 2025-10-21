@@ -1,6 +1,6 @@
-import { SQLITE } from "../../infrastructure/database/dataBaseClient";
-import { cacheRepository, sendMessage } from "../../main";
-import { animeVideoEntity } from "../entities/animeVideo.entity";
+import { SQLITE } from "../../infrastructure/database/dataBaseClient.ts";
+import { cacheRepository, sendMessage } from "../../main.ts";
+import { animeVideoEntity } from "../entities/animeVideo.entity.ts";
 import { status } from "elysia";
 
 export abstract class AnimeVideoService {

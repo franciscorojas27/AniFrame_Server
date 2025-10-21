@@ -1,8 +1,8 @@
 import Elysia from "elysia";
-import { animeRoutes } from "./routes/anime.route";
+import { animeRoutes } from "./routes/anime.route.ts";
 import { cors } from "@elysiajs/cors";
 import cron, { Patterns } from "@elysiajs/cron";
-import { SQLITE } from "../database/dataBaseClient";
+import { SQLITE } from "../database/dataBaseClient.ts";
 export const mainServer = new Elysia()
   .use(cors())
   .onRequest(({ request, status }) => {

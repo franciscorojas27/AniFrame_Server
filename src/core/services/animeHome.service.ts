@@ -1,7 +1,7 @@
-import { } from "../../infrastructure/cache/cache.repository";
-import { animeHome } from "../entities/animeHome.entity";
+import { } from "../../infrastructure/cache/cache.repository.ts";
+import { animeHome } from "../entities/animeHome.entity.ts";
 import { status } from "elysia";
-import { cacheRepository, sendMessage } from "../../main";
+import { cacheRepository, sendMessage } from "../../main.ts";
 
 export abstract class AnimeHomeService {
     static async getHomePageListAnime(): Promise<animeHome[]> {

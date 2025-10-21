@@ -1,4 +1,4 @@
-import { WeekDay, AnimeScheduleItem, animeCatalog } from "./anime.js";
+import { WeekDay, AnimeScheduleItem, animeCatalog } from "./anime.ts";
 
 export type AnimeDetails = {
   idAnime: string | undefined;

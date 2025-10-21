@@ -1,6 +1,6 @@
 import { status } from "elysia";
-import { cacheRepository, sendMessage } from "../../main";
-import { AnimeDetails } from "../entities/animeDetails.entity";
+import { cacheRepository, sendMessage } from "../../main.ts";
+import { AnimeDetails } from "../entities/animeDetails.entity.ts";
 
 export abstract class AnimeDetailsService {
     static async getAnimeDetails(slug: string): Promise<AnimeDetails> {

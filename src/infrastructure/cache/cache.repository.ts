@@ -1,6 +1,6 @@
 import { SQL } from "bun";
-import { SQLITE } from "../database/dataBaseClient";
-import { ICacheRepository } from "./ICacheRepository";
+import { SQLITE } from "../database/dataBaseClient.ts";
+import { ICacheRepository } from "./ICacheRepository.ts";
 
 const CACHE_TTL = Number(process.env.CACHE_TTL) || 5 * 60 * 1000;
 

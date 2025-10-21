@@ -1,4 +1,4 @@
-import { mainServer } from "../src/infrastructure/http/server";
+import { mainServer } from "../src/infrastructure/http/server.ts";
 
 describe("Anime API", () => {
   test("should works", async () => {

@@ -1,7 +1,7 @@
 import { status } from "elysia";
-import { cacheRepository, sendMessage } from "../../main";
-import { animeSearch } from "../entities/animeSearch.entity";
-import { Filter } from "../entities/animeFilter.entity";
+import { cacheRepository, sendMessage } from "../../main.ts";
+import { animeSearch } from "../entities/animeSearch.entity.ts";
+import { Filter } from "../entities/animeFilter.entity.ts";
 export abstract class AnimeSearchService {
     static async getSearchAnimeResults(query: string, page?: number, filter?: Filter
     ): Promise<{ results: animeSearch[]; numberPages: number }> {
