@@ -78,6 +78,7 @@ animeRoutes.get(
         },
       }
     }
+    await SQLITE`INSERT INTO activity_history (id,user_id,anime_id,cap_number) values(${Bun.randomUUIDv7()},1,${id},${cap}) ON CONFLICT(user_id, anime_id, cap_number) DO UPDATE SET cap_number = ${cap}, updated_at = datetime('now')`
 
     return {
       result: animeVideo,

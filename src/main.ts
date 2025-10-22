@@ -66,6 +66,16 @@ await SQLITE`
         FOREIGN KEY (anime_id) REFERENCES animes(id)
         UNIQUE (anime_id, cap)
     );
+    CREATE TABLE IF NOT EXISTS activity_history (
+        id TEXT PRIMARY KEY NOT NULL,
+        user_id INTEGER NOT NULL,
+        anime_id INTEGER NOT NULL,
+        cap_number INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE (user_id, anime_id, cap_number)
+    );
 
     CREATE TABLE IF NOT EXISTS history (
         id TEXT PRIMARY KEY,
@@ -79,7 +89,7 @@ await SQLITE`
         FOREIGN KEY (user_id) REFERENCES users(id),
         UNIQUE (user_id, anime_id, cap_number)
     );
-    COMMIT;
+  COMMIT;
 
 `
 
