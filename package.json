@@ -1,5 +1,4 @@
 {
-
   "name": "anime-tv",
   "type": "module",
   "main": "./src/main.ts",
@@ -10,7 +9,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "bun --watch src/main.ts",
-    "debug": "bun src/main.ts"
+    "debug": "bun --inspect=localhost:4000 --watch src/main.ts"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",

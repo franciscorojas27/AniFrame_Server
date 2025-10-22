@@ -11,9 +11,12 @@ import { AnimeSearchEntity } from '../../../core/entities/animeSearch.entity.ts'
 import { AnimeSearchService } from '../../../core/services/animeSearch.service.ts'
 import {
   AnimeDetailsEntity,
+  AnimeDetailsEpisodeEntity,
   AnimeDetailsInvalidEntity,
 } from '../../../core/entities/animeDetails.entity.ts'
 import { AnimeDetailsService } from '../../../core/services/animeDetails.service.ts'
+import { SQLITE } from '../../database/dataBaseClient.ts'
+import { AnimeRepository } from '../../../core/repositories/anime.repository.ts'
 
 export const animeRoutes = new Elysia({ prefix: '/anime' })
 
@@ -31,20 +34,73 @@ animeRoutes.get(
     },
   },
 )
-
 animeRoutes.get(
-  '/video/:id/:cap',
-  async ({ params: { id, cap } }) => {
-    const animeVideo = await AnimeVideoService.getVideoSource(id, cap)
-    return animeVideo
+  '/history/:cap/:id',
+  async ({
+    request,
+    status,
+    query: { watched, seconds },
+    params: { cap, id },
+  }) => {
+    const value =
+      (await SQLITE`SELECT * FROM history WHERE user_id = 1 AND anime_id = ${id}`) as []
+    if (value.length == 0) {
+      await AnimeRepository.insertOrUpdateHistory(id, cap, 1, 0, false)
+      return status(200)
+    }
+    await AnimeRepository.insertOrUpdateHistory(id, cap, 1, seconds, watched)
+    return status(200)
   },
   {
     params: t.Object({
-      id: t.String(),
-      cap: t.String(),
+      cap: t.Number(),
+      id: t.Number(),
+    }),
+    query: t.Object({
+      watched: t.Boolean(),
+      seconds: t.Number(),
+    }),
+  },
+)
+animeRoutes.get(
+  '/video/:slug/:cap/:id',
+  async ({ params: { slug, cap, id } }) => {
+    const animeVideo = await AnimeVideoService.getVideoSource(slug, cap)
+    const history = (await SQLITE`SELECT watched, last_position_seconds
+    from history`) as Array<{ watched: boolean; last_position_seconds: number }>
+    if (history.length === 0) {
+      await AnimeRepository.insertOrUpdateHistory(id, cap, 1, 0, false)
+      return {
+        result: animeVideo,
+        history: {
+          watched: false,
+          last_position_seconds: 0,
+        },
+      }
+    }
+
+    return {
+      result: animeVideo,
+      history: {
+        watched: Boolean(history[0].watched),
+        last_position_seconds: history[0].last_position_seconds,
+      },
+    }
+  },
+  {
+    params: t.Object({
+      slug: t.String(),
+      cap: t.Number(),
+      id: t.Number(),
     }),
     response: {
-      200: t.Array(animeVideoEntity.animeVideo),
+      200: t.Object({
+        result: t.Array(animeVideoEntity.animeVideo),
+        history: t.Object({
+          watched: t.Boolean(),
+          last_position_seconds: t.Number(),
+        }),
+      }),
       400: animeVideoEntity.animeVideoInvalid,
       500: animeVideoEntity.animeVideoInvalid,
     },
@@ -81,7 +137,6 @@ animeRoutes.get(
   '/details/:slug',
   async ({ params: { slug } }) => {
     const animeDetails = await AnimeDetailsService.getAnimeDetails(slug)
-    console.log('hola')
     return animeDetails
   },
   {
@@ -89,7 +144,10 @@ animeRoutes.get(
       slug: t.String(),
     }),
     response: {
-      200: AnimeDetailsEntity,
+      200: t.Object({
+        details: AnimeDetailsEntity,
+        episodes: t.Array(AnimeDetailsEpisodeEntity),
+      }),
       404: AnimeDetailsInvalidEntity,
       500: AnimeDetailsInvalidEntity,
     },

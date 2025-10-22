@@ -1,7 +1,7 @@
 import { t } from "elysia"
 
 export const AnimeSearchEntity = t.Object({
-    animeId: t.String(),
+    id: t.String(),
     name: t.String(),
     url: t.String(),
     urlImg: t.Union([t.String(), t.Null()]),

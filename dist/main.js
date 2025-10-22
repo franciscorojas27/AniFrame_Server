@@ -4494,57 +4494,9 @@ var require_websocket_server = __commonJS((exports, module) => {
   }
 });
 
-// src/infrastructure/cli/CLIProcess.ts
-import path from "path";
-
-class CLIProcess {
-  static instance;
-  pluginPath;
-  constructor() {
-    this.pluginPath = path.join(process.cwd(), "plugins", "animeav1.exe");
-  }
-  static getInstance() {
-    if (!CLIProcess.instance)
-      CLIProcess.instance = new CLIProcess;
-    return CLIProcess.instance;
-  }
-  async run(method, args = []) {
-    const fullArgs = [this.pluginPath, method, ...args.map(String)];
-    const start = performance.now();
-    const proc = Bun.spawn(fullArgs);
-    const result = await new Response(proc.stdout).text();
-    await proc.exited;
-    if (true) {
-      const end = performance.now();
-      console.log(`[CLIProcess] ${method} (${(end - start).toFixed(2)} ms)`);
-    }
-    return result.trim();
-  }
-  runSync(method, args = []) {
-    const fullArgs = [this.pluginPath, method, ...args.map(String)];
-    const proc = Bun.spawnSync(fullArgs);
-    return new TextDecoder().decode(proc.stdout).trim();
-  }
-}
-
-// src/infrastructure/cli/ManifestClient.ts
-class ManifestClient {
-  static instance;
-  cli = CLIProcess.getInstance();
-  constructor() {}
-  static getInstance() {
-    if (!ManifestClient.instance)
-      ManifestClient.instance = new ManifestClient;
-    return ManifestClient.instance;
-  }
-  async getManifest() {
-    return this.cli.runSync("getManifest");
-  }
-}
-
 // src/infrastructure/database/dataBaseClient.ts
-import path2 from "path";
-var basepath = path2.join(import.meta.dir, "animeTV.db").toString();
+import path from "path";
+var basepath = path.join(import.meta.dir, "animeTV.db").toString();
 var SQLITE = new Bun.SQL({
   adapter: "sqlite",
   filename: basepath,
@@ -8066,30 +8018,30 @@ class ValueErrorIterator {
     return next.done ? undefined : next.value;
   }
 }
-function Create(errorType, schema, path3, value, errors = []) {
+function Create(errorType, schema, path2, value, errors = []) {
   return {
     type: errorType,
     schema,
-    path: path3,
+    path: path2,
     value,
-    message: GetErrorFunction()({ errorType, path: path3, schema, value, errors }),
+    message: GetErrorFunction()({ errorType, path: path2, schema, value, errors }),
     errors
   };
 }
-function* FromAny3(schema, references, path3, value) {}
-function* FromArgument3(schema, references, path3, value) {}
-function* FromArray8(schema, references, path3, value) {
+function* FromAny3(schema, references, path2, value) {}
+function* FromArgument3(schema, references, path2, value) {}
+function* FromArray8(schema, references, path2, value) {
   if (!IsArray2(value)) {
-    return yield Create(ValueErrorType.Array, schema, path3, value);
+    return yield Create(ValueErrorType.Array, schema, path2, value);
   }
   if (IsDefined2(schema.minItems) && !(value.length >= schema.minItems)) {
-    yield Create(ValueErrorType.ArrayMinItems, schema, path3, value);
+    yield Create(ValueErrorType.ArrayMinItems, schema, path2, value);
   }
   if (IsDefined2(schema.maxItems) && !(value.length <= schema.maxItems)) {
-    yield Create(ValueErrorType.ArrayMaxItems, schema, path3, value);
+    yield Create(ValueErrorType.ArrayMaxItems, schema, path2, value);
   }
   for (let i = 0;i < value.length; i++) {
-    yield* Visit6(schema.items, references, `${path3}/${i}`, value[i]);
+    yield* Visit6(schema.items, references, `${path2}/${i}`, value[i]);
   }
   if (schema.uniqueItems === true && !function() {
     const set2 = new Set;
@@ -8103,116 +8055,116 @@ function* FromArray8(schema, references, path3, value) {
     }
     return true;
   }()) {
-    yield Create(ValueErrorType.ArrayUniqueItems, schema, path3, value);
+    yield Create(ValueErrorType.ArrayUniqueItems, schema, path2, value);
   }
   if (!(IsDefined2(schema.contains) || IsDefined2(schema.minContains) || IsDefined2(schema.maxContains))) {
     return;
   }
   const containsSchema = IsDefined2(schema.contains) ? schema.contains : Never();
-  const containsCount = value.reduce((acc, value2, index) => Visit6(containsSchema, references, `${path3}${index}`, value2).next().done === true ? acc + 1 : acc, 0);
+  const containsCount = value.reduce((acc, value2, index) => Visit6(containsSchema, references, `${path2}${index}`, value2).next().done === true ? acc + 1 : acc, 0);
   if (containsCount === 0) {
-    yield Create(ValueErrorType.ArrayContains, schema, path3, value);
+    yield Create(ValueErrorType.ArrayContains, schema, path2, value);
   }
   if (IsNumber2(schema.minContains) && containsCount < schema.minContains) {
-    yield Create(ValueErrorType.ArrayMinContains, schema, path3, value);
+    yield Create(ValueErrorType.ArrayMinContains, schema, path2, value);
   }
   if (IsNumber2(schema.maxContains) && containsCount > schema.maxContains) {
-    yield Create(ValueErrorType.ArrayMaxContains, schema, path3, value);
+    yield Create(ValueErrorType.ArrayMaxContains, schema, path2, value);
   }
 }
-function* FromAsyncIterator5(schema, references, path3, value) {
+function* FromAsyncIterator5(schema, references, path2, value) {
   if (!IsAsyncIterator2(value))
-    yield Create(ValueErrorType.AsyncIterator, schema, path3, value);
+    yield Create(ValueErrorType.AsyncIterator, schema, path2, value);
 }
-function* FromBigInt3(schema, references, path3, value) {
+function* FromBigInt3(schema, references, path2, value) {
   if (!IsBigInt2(value))
-    return yield Create(ValueErrorType.BigInt, schema, path3, value);
+    return yield Create(ValueErrorType.BigInt, schema, path2, value);
   if (IsDefined2(schema.exclusiveMaximum) && !(value < schema.exclusiveMaximum)) {
-    yield Create(ValueErrorType.BigIntExclusiveMaximum, schema, path3, value);
+    yield Create(ValueErrorType.BigIntExclusiveMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.exclusiveMinimum) && !(value > schema.exclusiveMinimum)) {
-    yield Create(ValueErrorType.BigIntExclusiveMinimum, schema, path3, value);
+    yield Create(ValueErrorType.BigIntExclusiveMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.maximum) && !(value <= schema.maximum)) {
-    yield Create(ValueErrorType.BigIntMaximum, schema, path3, value);
+    yield Create(ValueErrorType.BigIntMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.minimum) && !(value >= schema.minimum)) {
-    yield Create(ValueErrorType.BigIntMinimum, schema, path3, value);
+    yield Create(ValueErrorType.BigIntMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.multipleOf) && !(value % schema.multipleOf === BigInt(0))) {
-    yield Create(ValueErrorType.BigIntMultipleOf, schema, path3, value);
+    yield Create(ValueErrorType.BigIntMultipleOf, schema, path2, value);
   }
 }
-function* FromBoolean3(schema, references, path3, value) {
+function* FromBoolean3(schema, references, path2, value) {
   if (!IsBoolean2(value))
-    yield Create(ValueErrorType.Boolean, schema, path3, value);
+    yield Create(ValueErrorType.Boolean, schema, path2, value);
 }
-function* FromConstructor5(schema, references, path3, value) {
-  yield* Visit6(schema.returns, references, path3, value.prototype);
+function* FromConstructor5(schema, references, path2, value) {
+  yield* Visit6(schema.returns, references, path2, value.prototype);
 }
-function* FromDate3(schema, references, path3, value) {
+function* FromDate3(schema, references, path2, value) {
   if (!IsDate2(value))
-    return yield Create(ValueErrorType.Date, schema, path3, value);
+    return yield Create(ValueErrorType.Date, schema, path2, value);
   if (IsDefined2(schema.exclusiveMaximumTimestamp) && !(value.getTime() < schema.exclusiveMaximumTimestamp)) {
-    yield Create(ValueErrorType.DateExclusiveMaximumTimestamp, schema, path3, value);
+    yield Create(ValueErrorType.DateExclusiveMaximumTimestamp, schema, path2, value);
   }
   if (IsDefined2(schema.exclusiveMinimumTimestamp) && !(value.getTime() > schema.exclusiveMinimumTimestamp)) {
-    yield Create(ValueErrorType.DateExclusiveMinimumTimestamp, schema, path3, value);
+    yield Create(ValueErrorType.DateExclusiveMinimumTimestamp, schema, path2, value);
   }
   if (IsDefined2(schema.maximumTimestamp) && !(value.getTime() <= schema.maximumTimestamp)) {
-    yield Create(ValueErrorType.DateMaximumTimestamp, schema, path3, value);
+    yield Create(ValueErrorType.DateMaximumTimestamp, schema, path2, value);
   }
   if (IsDefined2(schema.minimumTimestamp) && !(value.getTime() >= schema.minimumTimestamp)) {
-    yield Create(ValueErrorType.DateMinimumTimestamp, schema, path3, value);
+    yield Create(ValueErrorType.DateMinimumTimestamp, schema, path2, value);
   }
   if (IsDefined2(schema.multipleOfTimestamp) && !(value.getTime() % schema.multipleOfTimestamp === 0)) {
-    yield Create(ValueErrorType.DateMultipleOfTimestamp, schema, path3, value);
+    yield Create(ValueErrorType.DateMultipleOfTimestamp, schema, path2, value);
   }
 }
-function* FromFunction5(schema, references, path3, value) {
+function* FromFunction5(schema, references, path2, value) {
   if (!IsFunction2(value))
-    yield Create(ValueErrorType.Function, schema, path3, value);
+    yield Create(ValueErrorType.Function, schema, path2, value);
 }
-function* FromImport2(schema, references, path3, value) {
+function* FromImport2(schema, references, path2, value) {
   const definitions = globalThis.Object.values(schema.$defs);
   const target = schema.$defs[schema.$ref];
-  yield* Visit6(target, [...references, ...definitions], path3, value);
+  yield* Visit6(target, [...references, ...definitions], path2, value);
 }
-function* FromInteger3(schema, references, path3, value) {
+function* FromInteger3(schema, references, path2, value) {
   if (!IsInteger(value))
-    return yield Create(ValueErrorType.Integer, schema, path3, value);
+    return yield Create(ValueErrorType.Integer, schema, path2, value);
   if (IsDefined2(schema.exclusiveMaximum) && !(value < schema.exclusiveMaximum)) {
-    yield Create(ValueErrorType.IntegerExclusiveMaximum, schema, path3, value);
+    yield Create(ValueErrorType.IntegerExclusiveMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.exclusiveMinimum) && !(value > schema.exclusiveMinimum)) {
-    yield Create(ValueErrorType.IntegerExclusiveMinimum, schema, path3, value);
+    yield Create(ValueErrorType.IntegerExclusiveMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.maximum) && !(value <= schema.maximum)) {
-    yield Create(ValueErrorType.IntegerMaximum, schema, path3, value);
+    yield Create(ValueErrorType.IntegerMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.minimum) && !(value >= schema.minimum)) {
-    yield Create(ValueErrorType.IntegerMinimum, schema, path3, value);
+    yield Create(ValueErrorType.IntegerMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.multipleOf) && !(value % schema.multipleOf === 0)) {
-    yield Create(ValueErrorType.IntegerMultipleOf, schema, path3, value);
+    yield Create(ValueErrorType.IntegerMultipleOf, schema, path2, value);
   }
 }
-function* FromIntersect10(schema, references, path3, value) {
+function* FromIntersect10(schema, references, path2, value) {
   let hasError = false;
   for (const inner of schema.allOf) {
-    for (const error of Visit6(inner, references, path3, value)) {
+    for (const error of Visit6(inner, references, path2, value)) {
       hasError = true;
       yield error;
     }
   }
   if (hasError) {
-    return yield Create(ValueErrorType.Intersect, schema, path3, value);
+    return yield Create(ValueErrorType.Intersect, schema, path2, value);
   }
   if (schema.unevaluatedProperties === false) {
     const keyCheck = new RegExp(KeyOfPattern(schema));
     for (const valueKey of Object.getOwnPropertyNames(value)) {
       if (!keyCheck.test(valueKey)) {
-        yield Create(ValueErrorType.IntersectUnevaluatedProperties, schema, `${path3}/${valueKey}`, value);
+        yield Create(ValueErrorType.IntersectUnevaluatedProperties, schema, `${path2}/${valueKey}`, value);
       }
     }
   }
@@ -8220,59 +8172,59 @@ function* FromIntersect10(schema, references, path3, value) {
     const keyCheck = new RegExp(KeyOfPattern(schema));
     for (const valueKey of Object.getOwnPropertyNames(value)) {
       if (!keyCheck.test(valueKey)) {
-        const next = Visit6(schema.unevaluatedProperties, references, `${path3}/${valueKey}`, value[valueKey]).next();
+        const next = Visit6(schema.unevaluatedProperties, references, `${path2}/${valueKey}`, value[valueKey]).next();
         if (!next.done)
           yield next.value;
       }
     }
   }
 }
-function* FromIterator5(schema, references, path3, value) {
+function* FromIterator5(schema, references, path2, value) {
   if (!IsIterator2(value))
-    yield Create(ValueErrorType.Iterator, schema, path3, value);
+    yield Create(ValueErrorType.Iterator, schema, path2, value);
 }
-function* FromLiteral4(schema, references, path3, value) {
+function* FromLiteral4(schema, references, path2, value) {
   if (!(value === schema.const))
-    yield Create(ValueErrorType.Literal, schema, path3, value);
+    yield Create(ValueErrorType.Literal, schema, path2, value);
 }
-function* FromNever3(schema, references, path3, value) {
-  yield Create(ValueErrorType.Never, schema, path3, value);
+function* FromNever3(schema, references, path2, value) {
+  yield Create(ValueErrorType.Never, schema, path2, value);
 }
-function* FromNot3(schema, references, path3, value) {
-  if (Visit6(schema.not, references, path3, value).next().done === true)
-    yield Create(ValueErrorType.Not, schema, path3, value);
+function* FromNot3(schema, references, path2, value) {
+  if (Visit6(schema.not, references, path2, value).next().done === true)
+    yield Create(ValueErrorType.Not, schema, path2, value);
 }
-function* FromNull3(schema, references, path3, value) {
+function* FromNull3(schema, references, path2, value) {
   if (!IsNull2(value))
-    yield Create(ValueErrorType.Null, schema, path3, value);
+    yield Create(ValueErrorType.Null, schema, path2, value);
 }
-function* FromNumber3(schema, references, path3, value) {
+function* FromNumber3(schema, references, path2, value) {
   if (!TypeSystemPolicy.IsNumberLike(value))
-    return yield Create(ValueErrorType.Number, schema, path3, value);
+    return yield Create(ValueErrorType.Number, schema, path2, value);
   if (IsDefined2(schema.exclusiveMaximum) && !(value < schema.exclusiveMaximum)) {
-    yield Create(ValueErrorType.NumberExclusiveMaximum, schema, path3, value);
+    yield Create(ValueErrorType.NumberExclusiveMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.exclusiveMinimum) && !(value > schema.exclusiveMinimum)) {
-    yield Create(ValueErrorType.NumberExclusiveMinimum, schema, path3, value);
+    yield Create(ValueErrorType.NumberExclusiveMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.maximum) && !(value <= schema.maximum)) {
-    yield Create(ValueErrorType.NumberMaximum, schema, path3, value);
+    yield Create(ValueErrorType.NumberMaximum, schema, path2, value);
   }
   if (IsDefined2(schema.minimum) && !(value >= schema.minimum)) {
-    yield Create(ValueErrorType.NumberMinimum, schema, path3, value);
+    yield Create(ValueErrorType.NumberMinimum, schema, path2, value);
   }
   if (IsDefined2(schema.multipleOf) && !(value % schema.multipleOf === 0)) {
-    yield Create(ValueErrorType.NumberMultipleOf, schema, path3, value);
+    yield Create(ValueErrorType.NumberMultipleOf, schema, path2, value);
   }
 }
-function* FromObject9(schema, references, path3, value) {
+function* FromObject9(schema, references, path2, value) {
   if (!TypeSystemPolicy.IsObjectLike(value))
-    return yield Create(ValueErrorType.Object, schema, path3, value);
+    return yield Create(ValueErrorType.Object, schema, path2, value);
   if (IsDefined2(schema.minProperties) && !(Object.getOwnPropertyNames(value).length >= schema.minProperties)) {
-    yield Create(ValueErrorType.ObjectMinProperties, schema, path3, value);
+    yield Create(ValueErrorType.ObjectMinProperties, schema, path2, value);
   }
   if (IsDefined2(schema.maxProperties) && !(Object.getOwnPropertyNames(value).length <= schema.maxProperties)) {
-    yield Create(ValueErrorType.ObjectMaxProperties, schema, path3, value);
+    yield Create(ValueErrorType.ObjectMaxProperties, schema, path2, value);
   }
   const requiredKeys = Array.isArray(schema.required) ? schema.required : [];
   const knownKeys = Object.getOwnPropertyNames(schema.properties);
@@ -8280,12 +8232,12 @@ function* FromObject9(schema, references, path3, value) {
   for (const requiredKey of requiredKeys) {
     if (unknownKeys.includes(requiredKey))
       continue;
-    yield Create(ValueErrorType.ObjectRequiredProperty, schema.properties[requiredKey], `${path3}/${EscapeKey(requiredKey)}`, undefined);
+    yield Create(ValueErrorType.ObjectRequiredProperty, schema.properties[requiredKey], `${path2}/${EscapeKey(requiredKey)}`, undefined);
   }
   if (schema.additionalProperties === false) {
     for (const valueKey of unknownKeys) {
       if (!knownKeys.includes(valueKey)) {
-        yield Create(ValueErrorType.ObjectAdditionalProperties, schema, `${path3}/${EscapeKey(valueKey)}`, value[valueKey]);
+        yield Create(ValueErrorType.ObjectAdditionalProperties, schema, `${path2}/${EscapeKey(valueKey)}`, value[valueKey]);
       }
     }
   }
@@ -8293,234 +8245,234 @@ function* FromObject9(schema, references, path3, value) {
     for (const valueKey of unknownKeys) {
       if (knownKeys.includes(valueKey))
         continue;
-      yield* Visit6(schema.additionalProperties, references, `${path3}/${EscapeKey(valueKey)}`, value[valueKey]);
+      yield* Visit6(schema.additionalProperties, references, `${path2}/${EscapeKey(valueKey)}`, value[valueKey]);
     }
   }
   for (const knownKey of knownKeys) {
     const property = schema.properties[knownKey];
     if (schema.required && schema.required.includes(knownKey)) {
-      yield* Visit6(property, references, `${path3}/${EscapeKey(knownKey)}`, value[knownKey]);
+      yield* Visit6(property, references, `${path2}/${EscapeKey(knownKey)}`, value[knownKey]);
       if (ExtendsUndefinedCheck(schema) && !(knownKey in value)) {
-        yield Create(ValueErrorType.ObjectRequiredProperty, property, `${path3}/${EscapeKey(knownKey)}`, undefined);
+        yield Create(ValueErrorType.ObjectRequiredProperty, property, `${path2}/${EscapeKey(knownKey)}`, undefined);
       }
     } else {
       if (TypeSystemPolicy.IsExactOptionalProperty(value, knownKey)) {
-        yield* Visit6(property, references, `${path3}/${EscapeKey(knownKey)}`, value[knownKey]);
+        yield* Visit6(property, references, `${path2}/${EscapeKey(knownKey)}`, value[knownKey]);
       }
     }
   }
 }
-function* FromPromise5(schema, references, path3, value) {
+function* FromPromise5(schema, references, path2, value) {
   if (!IsPromise(value))
-    yield Create(ValueErrorType.Promise, schema, path3, value);
+    yield Create(ValueErrorType.Promise, schema, path2, value);
 }
-function* FromRecord5(schema, references, path3, value) {
+function* FromRecord5(schema, references, path2, value) {
   if (!TypeSystemPolicy.IsRecordLike(value))
-    return yield Create(ValueErrorType.Object, schema, path3, value);
+    return yield Create(ValueErrorType.Object, schema, path2, value);
   if (IsDefined2(schema.minProperties) && !(Object.getOwnPropertyNames(value).length >= schema.minProperties)) {
-    yield Create(ValueErrorType.ObjectMinProperties, schema, path3, value);
+    yield Create(ValueErrorType.ObjectMinProperties, schema, path2, value);
   }
   if (IsDefined2(schema.maxProperties) && !(Object.getOwnPropertyNames(value).length <= schema.maxProperties)) {
-    yield Create(ValueErrorType.ObjectMaxProperties, schema, path3, value);
+    yield Create(ValueErrorType.ObjectMaxProperties, schema, path2, value);
   }
   const [patternKey, patternSchema] = Object.entries(schema.patternProperties)[0];
   const regex = new RegExp(patternKey);
   for (const [propertyKey, propertyValue] of Object.entries(value)) {
     if (regex.test(propertyKey))
-      yield* Visit6(patternSchema, references, `${path3}/${EscapeKey(propertyKey)}`, propertyValue);
+      yield* Visit6(patternSchema, references, `${path2}/${EscapeKey(propertyKey)}`, propertyValue);
   }
   if (typeof schema.additionalProperties === "object") {
     for (const [propertyKey, propertyValue] of Object.entries(value)) {
       if (!regex.test(propertyKey))
-        yield* Visit6(schema.additionalProperties, references, `${path3}/${EscapeKey(propertyKey)}`, propertyValue);
+        yield* Visit6(schema.additionalProperties, references, `${path2}/${EscapeKey(propertyKey)}`, propertyValue);
     }
   }
   if (schema.additionalProperties === false) {
     for (const [propertyKey, propertyValue] of Object.entries(value)) {
       if (regex.test(propertyKey))
         continue;
-      return yield Create(ValueErrorType.ObjectAdditionalProperties, schema, `${path3}/${EscapeKey(propertyKey)}`, propertyValue);
+      return yield Create(ValueErrorType.ObjectAdditionalProperties, schema, `${path2}/${EscapeKey(propertyKey)}`, propertyValue);
     }
   }
 }
-function* FromRef6(schema, references, path3, value) {
-  yield* Visit6(Deref(schema, references), references, path3, value);
+function* FromRef6(schema, references, path2, value) {
+  yield* Visit6(Deref(schema, references), references, path2, value);
 }
-function* FromRegExp3(schema, references, path3, value) {
+function* FromRegExp3(schema, references, path2, value) {
   if (!IsString2(value))
-    return yield Create(ValueErrorType.String, schema, path3, value);
+    return yield Create(ValueErrorType.String, schema, path2, value);
   if (IsDefined2(schema.minLength) && !(value.length >= schema.minLength)) {
-    yield Create(ValueErrorType.StringMinLength, schema, path3, value);
+    yield Create(ValueErrorType.StringMinLength, schema, path2, value);
   }
   if (IsDefined2(schema.maxLength) && !(value.length <= schema.maxLength)) {
-    yield Create(ValueErrorType.StringMaxLength, schema, path3, value);
+    yield Create(ValueErrorType.StringMaxLength, schema, path2, value);
   }
   const regex = new RegExp(schema.source, schema.flags);
   if (!regex.test(value)) {
-    return yield Create(ValueErrorType.RegExp, schema, path3, value);
+    return yield Create(ValueErrorType.RegExp, schema, path2, value);
   }
 }
-function* FromString3(schema, references, path3, value) {
+function* FromString3(schema, references, path2, value) {
   if (!IsString2(value))
-    return yield Create(ValueErrorType.String, schema, path3, value);
+    return yield Create(ValueErrorType.String, schema, path2, value);
   if (IsDefined2(schema.minLength) && !(value.length >= schema.minLength)) {
-    yield Create(ValueErrorType.StringMinLength, schema, path3, value);
+    yield Create(ValueErrorType.StringMinLength, schema, path2, value);
   }
   if (IsDefined2(schema.maxLength) && !(value.length <= schema.maxLength)) {
-    yield Create(ValueErrorType.StringMaxLength, schema, path3, value);
+    yield Create(ValueErrorType.StringMaxLength, schema, path2, value);
   }
   if (IsString2(schema.pattern)) {
     const regex = new RegExp(schema.pattern);
     if (!regex.test(value)) {
-      yield Create(ValueErrorType.StringPattern, schema, path3, value);
+      yield Create(ValueErrorType.StringPattern, schema, path2, value);
     }
   }
   if (IsString2(schema.format)) {
     if (!exports_format.Has(schema.format)) {
-      yield Create(ValueErrorType.StringFormatUnknown, schema, path3, value);
+      yield Create(ValueErrorType.StringFormatUnknown, schema, path2, value);
     } else {
       const format = exports_format.Get(schema.format);
       if (!format(value)) {
-        yield Create(ValueErrorType.StringFormat, schema, path3, value);
+        yield Create(ValueErrorType.StringFormat, schema, path2, value);
       }
     }
   }
 }
-function* FromSymbol3(schema, references, path3, value) {
+function* FromSymbol3(schema, references, path2, value) {
   if (!IsSymbol2(value))
-    yield Create(ValueErrorType.Symbol, schema, path3, value);
+    yield Create(ValueErrorType.Symbol, schema, path2, value);
 }
-function* FromTemplateLiteral5(schema, references, path3, value) {
+function* FromTemplateLiteral5(schema, references, path2, value) {
   if (!IsString2(value))
-    return yield Create(ValueErrorType.String, schema, path3, value);
+    return yield Create(ValueErrorType.String, schema, path2, value);
   const regex = new RegExp(schema.pattern);
   if (!regex.test(value)) {
-    yield Create(ValueErrorType.StringPattern, schema, path3, value);
+    yield Create(ValueErrorType.StringPattern, schema, path2, value);
   }
 }
-function* FromThis2(schema, references, path3, value) {
-  yield* Visit6(Deref(schema, references), references, path3, value);
+function* FromThis2(schema, references, path2, value) {
+  yield* Visit6(Deref(schema, references), references, path2, value);
 }
-function* FromTuple7(schema, references, path3, value) {
+function* FromTuple7(schema, references, path2, value) {
   if (!IsArray2(value))
-    return yield Create(ValueErrorType.Tuple, schema, path3, value);
+    return yield Create(ValueErrorType.Tuple, schema, path2, value);
   if (schema.items === undefined && !(value.length === 0)) {
-    return yield Create(ValueErrorType.TupleLength, schema, path3, value);
+    return yield Create(ValueErrorType.TupleLength, schema, path2, value);
   }
   if (!(value.length === schema.maxItems)) {
-    return yield Create(ValueErrorType.TupleLength, schema, path3, value);
+    return yield Create(ValueErrorType.TupleLength, schema, path2, value);
   }
   if (!schema.items) {
     return;
   }
   for (let i = 0;i < schema.items.length; i++) {
-    yield* Visit6(schema.items[i], references, `${path3}/${i}`, value[i]);
+    yield* Visit6(schema.items[i], references, `${path2}/${i}`, value[i]);
   }
 }
-function* FromUndefined3(schema, references, path3, value) {
+function* FromUndefined3(schema, references, path2, value) {
   if (!IsUndefined2(value))
-    yield Create(ValueErrorType.Undefined, schema, path3, value);
+    yield Create(ValueErrorType.Undefined, schema, path2, value);
 }
-function* FromUnion12(schema, references, path3, value) {
+function* FromUnion12(schema, references, path2, value) {
   if (Check(schema, references, value))
     return;
-  const errors = schema.anyOf.map((variant) => new ValueErrorIterator(Visit6(variant, references, path3, value)));
-  yield Create(ValueErrorType.Union, schema, path3, value, errors);
+  const errors = schema.anyOf.map((variant) => new ValueErrorIterator(Visit6(variant, references, path2, value)));
+  yield Create(ValueErrorType.Union, schema, path2, value, errors);
 }
-function* FromUint8Array3(schema, references, path3, value) {
+function* FromUint8Array3(schema, references, path2, value) {
   if (!IsUint8Array2(value))
-    return yield Create(ValueErrorType.Uint8Array, schema, path3, value);
+    return yield Create(ValueErrorType.Uint8Array, schema, path2, value);
   if (IsDefined2(schema.maxByteLength) && !(value.length <= schema.maxByteLength)) {
-    yield Create(ValueErrorType.Uint8ArrayMaxByteLength, schema, path3, value);
+    yield Create(ValueErrorType.Uint8ArrayMaxByteLength, schema, path2, value);
   }
   if (IsDefined2(schema.minByteLength) && !(value.length >= schema.minByteLength)) {
-    yield Create(ValueErrorType.Uint8ArrayMinByteLength, schema, path3, value);
+    yield Create(ValueErrorType.Uint8ArrayMinByteLength, schema, path2, value);
   }
 }
-function* FromUnknown3(schema, references, path3, value) {}
-function* FromVoid3(schema, references, path3, value) {
+function* FromUnknown3(schema, references, path2, value) {}
+function* FromVoid3(schema, references, path2, value) {
   if (!TypeSystemPolicy.IsVoidLike(value))
-    yield Create(ValueErrorType.Void, schema, path3, value);
+    yield Create(ValueErrorType.Void, schema, path2, value);
 }
-function* FromKind2(schema, references, path3, value) {
+function* FromKind2(schema, references, path2, value) {
   const check = exports_type2.Get(schema[Kind]);
   if (!check(schema, value))
-    yield Create(ValueErrorType.Kind, schema, path3, value);
+    yield Create(ValueErrorType.Kind, schema, path2, value);
 }
-function* Visit6(schema, references, path3, value) {
+function* Visit6(schema, references, path2, value) {
   const references_ = IsDefined2(schema.$id) ? [...references, schema] : references;
   const schema_ = schema;
   switch (schema_[Kind]) {
     case "Any":
-      return yield* FromAny3(schema_, references_, path3, value);
+      return yield* FromAny3(schema_, references_, path2, value);
     case "Argument":
-      return yield* FromArgument3(schema_, references_, path3, value);
+      return yield* FromArgument3(schema_, references_, path2, value);
     case "Array":
-      return yield* FromArray8(schema_, references_, path3, value);
+      return yield* FromArray8(schema_, references_, path2, value);
     case "AsyncIterator":
-      return yield* FromAsyncIterator5(schema_, references_, path3, value);
+      return yield* FromAsyncIterator5(schema_, references_, path2, value);
     case "BigInt":
-      return yield* FromBigInt3(schema_, references_, path3, value);
+      return yield* FromBigInt3(schema_, references_, path2, value);
     case "Boolean":
-      return yield* FromBoolean3(schema_, references_, path3, value);
+      return yield* FromBoolean3(schema_, references_, path2, value);
     case "Constructor":
-      return yield* FromConstructor5(schema_, references_, path3, value);
+      return yield* FromConstructor5(schema_, references_, path2, value);
     case "Date":
-      return yield* FromDate3(schema_, references_, path3, value);
+      return yield* FromDate3(schema_, references_, path2, value);
     case "Function":
-      return yield* FromFunction5(schema_, references_, path3, value);
+      return yield* FromFunction5(schema_, references_, path2, value);
     case "Import":
-      return yield* FromImport2(schema_, references_, path3, value);
+      return yield* FromImport2(schema_, references_, path2, value);
     case "Integer":
-      return yield* FromInteger3(schema_, references_, path3, value);
+      return yield* FromInteger3(schema_, references_, path2, value);
     case "Intersect":
-      return yield* FromIntersect10(schema_, references_, path3, value);
+      return yield* FromIntersect10(schema_, references_, path2, value);
     case "Iterator":
-      return yield* FromIterator5(schema_, references_, path3, value);
+      return yield* FromIterator5(schema_, references_, path2, value);
     case "Literal":
-      return yield* FromLiteral4(schema_, references_, path3, value);
+      return yield* FromLiteral4(schema_, references_, path2, value);
     case "Never":
-      return yield* FromNever3(schema_, references_, path3, value);
+      return yield* FromNever3(schema_, references_, path2, value);
     case "Not":
-      return yield* FromNot3(schema_, references_, path3, value);
+      return yield* FromNot3(schema_, references_, path2, value);
     case "Null":
-      return yield* FromNull3(schema_, references_, path3, value);
+      return yield* FromNull3(schema_, references_, path2, value);
     case "Number":
-      return yield* FromNumber3(schema_, references_, path3, value);
+      return yield* FromNumber3(schema_, references_, path2, value);
     case "Object":
-      return yield* FromObject9(schema_, references_, path3, value);
+      return yield* FromObject9(schema_, references_, path2, value);
     case "Promise":
-      return yield* FromPromise5(schema_, references_, path3, value);
+      return yield* FromPromise5(schema_, references_, path2, value);
     case "Record":
-      return yield* FromRecord5(schema_, references_, path3, value);
+      return yield* FromRecord5(schema_, references_, path2, value);
     case "Ref":
-      return yield* FromRef6(schema_, references_, path3, value);
+      return yield* FromRef6(schema_, references_, path2, value);
     case "RegExp":
-      return yield* FromRegExp3(schema_, references_, path3, value);
+      return yield* FromRegExp3(schema_, references_, path2, value);
     case "String":
-      return yield* FromString3(schema_, references_, path3, value);
+      return yield* FromString3(schema_, references_, path2, value);
     case "Symbol":
-      return yield* FromSymbol3(schema_, references_, path3, value);
+      return yield* FromSymbol3(schema_, references_, path2, value);
     case "TemplateLiteral":
-      return yield* FromTemplateLiteral5(schema_, references_, path3, value);
+      return yield* FromTemplateLiteral5(schema_, references_, path2, value);
     case "This":
-      return yield* FromThis2(schema_, references_, path3, value);
+      return yield* FromThis2(schema_, references_, path2, value);
     case "Tuple":
-      return yield* FromTuple7(schema_, references_, path3, value);
+      return yield* FromTuple7(schema_, references_, path2, value);
     case "Undefined":
-      return yield* FromUndefined3(schema_, references_, path3, value);
+      return yield* FromUndefined3(schema_, references_, path2, value);
     case "Union":
-      return yield* FromUnion12(schema_, references_, path3, value);
+      return yield* FromUnion12(schema_, references_, path2, value);
     case "Uint8Array":
-      return yield* FromUint8Array3(schema_, references_, path3, value);
+      return yield* FromUint8Array3(schema_, references_, path2, value);
     case "Unknown":
-      return yield* FromUnknown3(schema_, references_, path3, value);
+      return yield* FromUnknown3(schema_, references_, path2, value);
     case "Void":
-      return yield* FromVoid3(schema_, references_, path3, value);
+      return yield* FromVoid3(schema_, references_, path2, value);
     default:
       if (!exports_type2.Has(schema_[Kind]))
         throw new ValueErrorsUnknownTypeError(schema);
-      return yield* FromKind2(schema_, references_, path3, value);
+      return yield* FromKind2(schema_, references_, path2, value);
   }
 }
 function Errors(...args) {
@@ -9551,58 +9503,58 @@ class TransformDecodeCheckError extends TypeBoxError {
 }
 
 class TransformDecodeError extends TypeBoxError {
-  constructor(schema, path3, value, error) {
+  constructor(schema, path2, value, error) {
     super(error instanceof Error ? error.message : "Unknown error");
     this.schema = schema;
-    this.path = path3;
+    this.path = path2;
     this.value = value;
     this.error = error;
   }
 }
-function Default3(schema, path3, value) {
+function Default3(schema, path2, value) {
   try {
     return IsTransform(schema) ? schema[TransformKind].Decode(value) : value;
   } catch (error) {
-    throw new TransformDecodeError(schema, path3, value, error);
+    throw new TransformDecodeError(schema, path2, value, error);
   }
 }
-function FromArray14(schema, references, path3, value) {
-  return IsArray2(value) ? Default3(schema, path3, value.map((value2, index) => Visit11(schema.items, references, `${path3}/${index}`, value2))) : Default3(schema, path3, value);
+function FromArray14(schema, references, path2, value) {
+  return IsArray2(value) ? Default3(schema, path2, value.map((value2, index) => Visit11(schema.items, references, `${path2}/${index}`, value2))) : Default3(schema, path2, value);
 }
-function FromIntersect15(schema, references, path3, value) {
+function FromIntersect15(schema, references, path2, value) {
   if (!IsObject2(value) || IsValueType(value))
-    return Default3(schema, path3, value);
+    return Default3(schema, path2, value);
   const knownEntries = KeyOfPropertyEntries(schema);
   const knownKeys = knownEntries.map((entry) => entry[0]);
   const knownProperties = { ...value };
   for (const [knownKey, knownSchema] of knownEntries)
     if (knownKey in knownProperties) {
-      knownProperties[knownKey] = Visit11(knownSchema, references, `${path3}/${knownKey}`, knownProperties[knownKey]);
+      knownProperties[knownKey] = Visit11(knownSchema, references, `${path2}/${knownKey}`, knownProperties[knownKey]);
     }
   if (!IsTransform(schema.unevaluatedProperties)) {
-    return Default3(schema, path3, knownProperties);
+    return Default3(schema, path2, knownProperties);
   }
   const unknownKeys = Object.getOwnPropertyNames(knownProperties);
   const unevaluatedProperties = schema.unevaluatedProperties;
   const unknownProperties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.includes(key)) {
-      unknownProperties[key] = Default3(unevaluatedProperties, `${path3}/${key}`, unknownProperties[key]);
+      unknownProperties[key] = Default3(unevaluatedProperties, `${path2}/${key}`, unknownProperties[key]);
     }
-  return Default3(schema, path3, unknownProperties);
+  return Default3(schema, path2, unknownProperties);
 }
-function FromImport7(schema, references, path3, value) {
+function FromImport7(schema, references, path2, value) {
   const additional = globalThis.Object.values(schema.$defs);
   const target = schema.$defs[schema.$ref];
-  const result = Visit11(target, [...references, ...additional], path3, value);
-  return Default3(schema, path3, result);
+  const result = Visit11(target, [...references, ...additional], path2, value);
+  return Default3(schema, path2, result);
 }
-function FromNot5(schema, references, path3, value) {
-  return Default3(schema, path3, Visit11(schema.not, references, path3, value));
+function FromNot5(schema, references, path2, value) {
+  return Default3(schema, path2, Visit11(schema.not, references, path2, value));
 }
-function FromObject15(schema, references, path3, value) {
+function FromObject15(schema, references, path2, value) {
   if (!IsObject2(value))
-    return Default3(schema, path3, value);
+    return Default3(schema, path2, value);
   const knownKeys = KeyOfPropertyKeys(schema);
   const knownProperties = { ...value };
   for (const key of knownKeys) {
@@ -9610,90 +9562,90 @@ function FromObject15(schema, references, path3, value) {
       continue;
     if (IsUndefined2(knownProperties[key]) && (!IsUndefined3(schema.properties[key]) || TypeSystemPolicy.IsExactOptionalProperty(knownProperties, key)))
       continue;
-    knownProperties[key] = Visit11(schema.properties[key], references, `${path3}/${key}`, knownProperties[key]);
+    knownProperties[key] = Visit11(schema.properties[key], references, `${path2}/${key}`, knownProperties[key]);
   }
   if (!IsSchema(schema.additionalProperties)) {
-    return Default3(schema, path3, knownProperties);
+    return Default3(schema, path2, knownProperties);
   }
   const unknownKeys = Object.getOwnPropertyNames(knownProperties);
   const additionalProperties = schema.additionalProperties;
   const unknownProperties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.includes(key)) {
-      unknownProperties[key] = Default3(additionalProperties, `${path3}/${key}`, unknownProperties[key]);
+      unknownProperties[key] = Default3(additionalProperties, `${path2}/${key}`, unknownProperties[key]);
     }
-  return Default3(schema, path3, unknownProperties);
+  return Default3(schema, path2, unknownProperties);
 }
-function FromRecord10(schema, references, path3, value) {
+function FromRecord10(schema, references, path2, value) {
   if (!IsObject2(value))
-    return Default3(schema, path3, value);
+    return Default3(schema, path2, value);
   const pattern = Object.getOwnPropertyNames(schema.patternProperties)[0];
   const knownKeys = new RegExp(pattern);
   const knownProperties = { ...value };
   for (const key of Object.getOwnPropertyNames(value))
     if (knownKeys.test(key)) {
-      knownProperties[key] = Visit11(schema.patternProperties[pattern], references, `${path3}/${key}`, knownProperties[key]);
+      knownProperties[key] = Visit11(schema.patternProperties[pattern], references, `${path2}/${key}`, knownProperties[key]);
     }
   if (!IsSchema(schema.additionalProperties)) {
-    return Default3(schema, path3, knownProperties);
+    return Default3(schema, path2, knownProperties);
   }
   const unknownKeys = Object.getOwnPropertyNames(knownProperties);
   const additionalProperties = schema.additionalProperties;
   const unknownProperties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.test(key)) {
-      unknownProperties[key] = Default3(additionalProperties, `${path3}/${key}`, unknownProperties[key]);
+      unknownProperties[key] = Default3(additionalProperties, `${path2}/${key}`, unknownProperties[key]);
     }
-  return Default3(schema, path3, unknownProperties);
+  return Default3(schema, path2, unknownProperties);
 }
-function FromRef11(schema, references, path3, value) {
+function FromRef11(schema, references, path2, value) {
   const target = Deref(schema, references);
-  return Default3(schema, path3, Visit11(target, references, path3, value));
+  return Default3(schema, path2, Visit11(target, references, path2, value));
 }
-function FromThis7(schema, references, path3, value) {
+function FromThis7(schema, references, path2, value) {
   const target = Deref(schema, references);
-  return Default3(schema, path3, Visit11(target, references, path3, value));
+  return Default3(schema, path2, Visit11(target, references, path2, value));
 }
-function FromTuple12(schema, references, path3, value) {
-  return IsArray2(value) && IsArray2(schema.items) ? Default3(schema, path3, schema.items.map((schema2, index) => Visit11(schema2, references, `${path3}/${index}`, value[index]))) : Default3(schema, path3, value);
+function FromTuple12(schema, references, path2, value) {
+  return IsArray2(value) && IsArray2(schema.items) ? Default3(schema, path2, schema.items.map((schema2, index) => Visit11(schema2, references, `${path2}/${index}`, value[index]))) : Default3(schema, path2, value);
 }
-function FromUnion17(schema, references, path3, value) {
+function FromUnion17(schema, references, path2, value) {
   for (const subschema of schema.anyOf) {
     if (!Check(subschema, references, value))
       continue;
-    const decoded = Visit11(subschema, references, path3, value);
-    return Default3(schema, path3, decoded);
+    const decoded = Visit11(subschema, references, path2, value);
+    return Default3(schema, path2, decoded);
   }
-  return Default3(schema, path3, value);
+  return Default3(schema, path2, value);
 }
-function Visit11(schema, references, path3, value) {
+function Visit11(schema, references, path2, value) {
   const references_ = Pushref(schema, references);
   const schema_ = schema;
   switch (schema[Kind]) {
     case "Array":
-      return FromArray14(schema_, references_, path3, value);
+      return FromArray14(schema_, references_, path2, value);
     case "Import":
-      return FromImport7(schema_, references_, path3, value);
+      return FromImport7(schema_, references_, path2, value);
     case "Intersect":
-      return FromIntersect15(schema_, references_, path3, value);
+      return FromIntersect15(schema_, references_, path2, value);
     case "Not":
-      return FromNot5(schema_, references_, path3, value);
+      return FromNot5(schema_, references_, path2, value);
     case "Object":
-      return FromObject15(schema_, references_, path3, value);
+      return FromObject15(schema_, references_, path2, value);
     case "Record":
-      return FromRecord10(schema_, references_, path3, value);
+      return FromRecord10(schema_, references_, path2, value);
     case "Ref":
-      return FromRef11(schema_, references_, path3, value);
+      return FromRef11(schema_, references_, path2, value);
     case "Symbol":
-      return Default3(schema_, path3, value);
+      return Default3(schema_, path2, value);
     case "This":
-      return FromThis7(schema_, references_, path3, value);
+      return FromThis7(schema_, references_, path2, value);
     case "Tuple":
-      return FromTuple12(schema_, references_, path3, value);
+      return FromTuple12(schema_, references_, path2, value);
     case "Union":
-      return FromUnion17(schema_, references_, path3, value);
+      return FromUnion17(schema_, references_, path2, value);
     default:
-      return Default3(schema_, path3, value);
+      return Default3(schema_, path2, value);
   }
 }
 function TransformDecode(schema, references, value) {
@@ -9711,33 +9663,33 @@ class TransformEncodeCheckError extends TypeBoxError {
 }
 
 class TransformEncodeError extends TypeBoxError {
-  constructor(schema, path3, value, error) {
+  constructor(schema, path2, value, error) {
     super(`${error instanceof Error ? error.message : "Unknown error"}`);
     this.schema = schema;
-    this.path = path3;
+    this.path = path2;
     this.value = value;
     this.error = error;
   }
 }
-function Default4(schema, path3, value) {
+function Default4(schema, path2, value) {
   try {
     return IsTransform(schema) ? schema[TransformKind].Encode(value) : value;
   } catch (error) {
-    throw new TransformEncodeError(schema, path3, value, error);
+    throw new TransformEncodeError(schema, path2, value, error);
   }
 }
-function FromArray15(schema, references, path3, value) {
-  const defaulted = Default4(schema, path3, value);
-  return IsArray2(defaulted) ? defaulted.map((value2, index) => Visit12(schema.items, references, `${path3}/${index}`, value2)) : defaulted;
+function FromArray15(schema, references, path2, value) {
+  const defaulted = Default4(schema, path2, value);
+  return IsArray2(defaulted) ? defaulted.map((value2, index) => Visit12(schema.items, references, `${path2}/${index}`, value2)) : defaulted;
 }
-function FromImport8(schema, references, path3, value) {
+function FromImport8(schema, references, path2, value) {
   const additional = globalThis.Object.values(schema.$defs);
   const target = schema.$defs[schema.$ref];
-  const result = Default4(schema, path3, value);
-  return Visit12(target, [...references, ...additional], path3, result);
+  const result = Default4(schema, path2, value);
+  return Visit12(target, [...references, ...additional], path2, result);
 }
-function FromIntersect16(schema, references, path3, value) {
-  const defaulted = Default4(schema, path3, value);
+function FromIntersect16(schema, references, path2, value) {
+  const defaulted = Default4(schema, path2, value);
   if (!IsObject2(value) || IsValueType(value))
     return defaulted;
   const knownEntries = KeyOfPropertyEntries(schema);
@@ -9745,7 +9697,7 @@ function FromIntersect16(schema, references, path3, value) {
   const knownProperties = { ...defaulted };
   for (const [knownKey, knownSchema] of knownEntries)
     if (knownKey in knownProperties) {
-      knownProperties[knownKey] = Visit12(knownSchema, references, `${path3}/${knownKey}`, knownProperties[knownKey]);
+      knownProperties[knownKey] = Visit12(knownSchema, references, `${path2}/${knownKey}`, knownProperties[knownKey]);
     }
   if (!IsTransform(schema.unevaluatedProperties)) {
     return knownProperties;
@@ -9755,15 +9707,15 @@ function FromIntersect16(schema, references, path3, value) {
   const properties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.includes(key)) {
-      properties[key] = Default4(unevaluatedProperties, `${path3}/${key}`, properties[key]);
+      properties[key] = Default4(unevaluatedProperties, `${path2}/${key}`, properties[key]);
     }
   return properties;
 }
-function FromNot6(schema, references, path3, value) {
-  return Default4(schema.not, path3, Default4(schema, path3, value));
+function FromNot6(schema, references, path2, value) {
+  return Default4(schema.not, path2, Default4(schema, path2, value));
 }
-function FromObject16(schema, references, path3, value) {
-  const defaulted = Default4(schema, path3, value);
+function FromObject16(schema, references, path2, value) {
+  const defaulted = Default4(schema, path2, value);
   if (!IsObject2(defaulted))
     return defaulted;
   const knownKeys = KeyOfPropertyKeys(schema);
@@ -9773,7 +9725,7 @@ function FromObject16(schema, references, path3, value) {
       continue;
     if (IsUndefined2(knownProperties[key]) && (!IsUndefined3(schema.properties[key]) || TypeSystemPolicy.IsExactOptionalProperty(knownProperties, key)))
       continue;
-    knownProperties[key] = Visit12(schema.properties[key], references, `${path3}/${key}`, knownProperties[key]);
+    knownProperties[key] = Visit12(schema.properties[key], references, `${path2}/${key}`, knownProperties[key]);
   }
   if (!IsSchema(schema.additionalProperties)) {
     return knownProperties;
@@ -9783,12 +9735,12 @@ function FromObject16(schema, references, path3, value) {
   const properties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.includes(key)) {
-      properties[key] = Default4(additionalProperties, `${path3}/${key}`, properties[key]);
+      properties[key] = Default4(additionalProperties, `${path2}/${key}`, properties[key]);
     }
   return properties;
 }
-function FromRecord11(schema, references, path3, value) {
-  const defaulted = Default4(schema, path3, value);
+function FromRecord11(schema, references, path2, value) {
+  const defaulted = Default4(schema, path2, value);
   if (!IsObject2(value))
     return defaulted;
   const pattern = Object.getOwnPropertyNames(schema.patternProperties)[0];
@@ -9796,7 +9748,7 @@ function FromRecord11(schema, references, path3, value) {
   const knownProperties = { ...defaulted };
   for (const key of Object.getOwnPropertyNames(value))
     if (knownKeys.test(key)) {
-      knownProperties[key] = Visit12(schema.patternProperties[pattern], references, `${path3}/${key}`, knownProperties[key]);
+      knownProperties[key] = Visit12(schema.patternProperties[pattern], references, `${path2}/${key}`, knownProperties[key]);
     }
   if (!IsSchema(schema.additionalProperties)) {
     return knownProperties;
@@ -9806,65 +9758,65 @@ function FromRecord11(schema, references, path3, value) {
   const properties = { ...knownProperties };
   for (const key of unknownKeys)
     if (!knownKeys.test(key)) {
-      properties[key] = Default4(additionalProperties, `${path3}/${key}`, properties[key]);
+      properties[key] = Default4(additionalProperties, `${path2}/${key}`, properties[key]);
     }
   return properties;
 }
-function FromRef12(schema, references, path3, value) {
+function FromRef12(schema, references, path2, value) {
   const target = Deref(schema, references);
-  const resolved = Visit12(target, references, path3, value);
-  return Default4(schema, path3, resolved);
+  const resolved = Visit12(target, references, path2, value);
+  return Default4(schema, path2, resolved);
 }
-function FromThis8(schema, references, path3, value) {
+function FromThis8(schema, references, path2, value) {
   const target = Deref(schema, references);
-  const resolved = Visit12(target, references, path3, value);
-  return Default4(schema, path3, resolved);
+  const resolved = Visit12(target, references, path2, value);
+  return Default4(schema, path2, resolved);
 }
-function FromTuple13(schema, references, path3, value) {
-  const value1 = Default4(schema, path3, value);
-  return IsArray2(schema.items) ? schema.items.map((schema2, index) => Visit12(schema2, references, `${path3}/${index}`, value1[index])) : [];
+function FromTuple13(schema, references, path2, value) {
+  const value1 = Default4(schema, path2, value);
+  return IsArray2(schema.items) ? schema.items.map((schema2, index) => Visit12(schema2, references, `${path2}/${index}`, value1[index])) : [];
 }
-function FromUnion18(schema, references, path3, value) {
+function FromUnion18(schema, references, path2, value) {
   for (const subschema of schema.anyOf) {
     if (!Check(subschema, references, value))
       continue;
-    const value1 = Visit12(subschema, references, path3, value);
-    return Default4(schema, path3, value1);
+    const value1 = Visit12(subschema, references, path2, value);
+    return Default4(schema, path2, value1);
   }
   for (const subschema of schema.anyOf) {
-    const value1 = Visit12(subschema, references, path3, value);
+    const value1 = Visit12(subschema, references, path2, value);
     if (!Check(schema, references, value1))
       continue;
-    return Default4(schema, path3, value1);
+    return Default4(schema, path2, value1);
   }
-  return Default4(schema, path3, value);
+  return Default4(schema, path2, value);
 }
-function Visit12(schema, references, path3, value) {
+function Visit12(schema, references, path2, value) {
   const references_ = Pushref(schema, references);
   const schema_ = schema;
   switch (schema[Kind]) {
     case "Array":
-      return FromArray15(schema_, references_, path3, value);
+      return FromArray15(schema_, references_, path2, value);
     case "Import":
-      return FromImport8(schema_, references_, path3, value);
+      return FromImport8(schema_, references_, path2, value);
     case "Intersect":
-      return FromIntersect16(schema_, references_, path3, value);
+      return FromIntersect16(schema_, references_, path2, value);
     case "Not":
-      return FromNot6(schema_, references_, path3, value);
+      return FromNot6(schema_, references_, path2, value);
     case "Object":
-      return FromObject16(schema_, references_, path3, value);
+      return FromObject16(schema_, references_, path2, value);
     case "Record":
-      return FromRecord11(schema_, references_, path3, value);
+      return FromRecord11(schema_, references_, path2, value);
     case "Ref":
-      return FromRef12(schema_, references_, path3, value);
+      return FromRef12(schema_, references_, path2, value);
     case "This":
-      return FromThis8(schema_, references_, path3, value);
+      return FromThis8(schema_, references_, path2, value);
     case "Tuple":
-      return FromTuple13(schema_, references_, path3, value);
+      return FromTuple13(schema_, references_, path2, value);
     case "Union":
-      return FromUnion18(schema_, references_, path3, value);
+      return FromUnion18(schema_, references_, path2, value);
     default:
-      return Default4(schema_, path3, value);
+      return Default4(schema_, path2, value);
   }
 }
 function TransformEncode(schema, references, value) {
@@ -10130,19 +10082,19 @@ __export(exports_pointer, {
   Delete: () => Delete3
 });
 class ValuePointerRootSetError extends TypeBoxError {
-  constructor(value, path3, update) {
+  constructor(value, path2, update) {
     super("Cannot set root value");
     this.value = value;
-    this.path = path3;
+    this.path = path2;
     this.update = update;
   }
 }
 
 class ValuePointerRootDeleteError extends TypeBoxError {
-  constructor(value, path3) {
+  constructor(value, path2) {
     super("Cannot delete root value");
     this.value = value;
-    this.path = path3;
+    this.path = path2;
   }
 }
 function Escape2(component) {
@@ -10286,82 +10238,82 @@ class ValueDiffError extends TypeBoxError {
     this.value = value;
   }
 }
-function CreateUpdate(path3, value) {
-  return { type: "update", path: path3, value };
+function CreateUpdate(path2, value) {
+  return { type: "update", path: path2, value };
 }
-function CreateInsert(path3, value) {
-  return { type: "insert", path: path3, value };
+function CreateInsert(path2, value) {
+  return { type: "insert", path: path2, value };
 }
-function CreateDelete(path3) {
-  return { type: "delete", path: path3 };
+function CreateDelete(path2) {
+  return { type: "delete", path: path2 };
 }
 function AssertDiffable(value) {
   if (globalThis.Object.getOwnPropertySymbols(value).length > 0)
     throw new ValueDiffError(value, "Cannot diff objects with symbols");
 }
-function* ObjectType4(path3, current, next) {
+function* ObjectType4(path2, current, next) {
   AssertDiffable(current);
   AssertDiffable(next);
   if (!IsStandardObject(next))
-    return yield CreateUpdate(path3, next);
+    return yield CreateUpdate(path2, next);
   const currentKeys = globalThis.Object.getOwnPropertyNames(current);
   const nextKeys = globalThis.Object.getOwnPropertyNames(next);
   for (const key of nextKeys) {
     if (HasPropertyKey2(current, key))
       continue;
-    yield CreateInsert(`${path3}/${key}`, next[key]);
+    yield CreateInsert(`${path2}/${key}`, next[key]);
   }
   for (const key of currentKeys) {
     if (!HasPropertyKey2(next, key))
       continue;
     if (Equal(current, next))
       continue;
-    yield* Visit15(`${path3}/${key}`, current[key], next[key]);
+    yield* Visit15(`${path2}/${key}`, current[key], next[key]);
   }
   for (const key of currentKeys) {
     if (HasPropertyKey2(next, key))
       continue;
-    yield CreateDelete(`${path3}/${key}`);
+    yield CreateDelete(`${path2}/${key}`);
   }
 }
-function* ArrayType4(path3, current, next) {
+function* ArrayType4(path2, current, next) {
   if (!IsArray2(next))
-    return yield CreateUpdate(path3, next);
+    return yield CreateUpdate(path2, next);
   for (let i = 0;i < Math.min(current.length, next.length); i++) {
-    yield* Visit15(`${path3}/${i}`, current[i], next[i]);
+    yield* Visit15(`${path2}/${i}`, current[i], next[i]);
   }
   for (let i = 0;i < next.length; i++) {
     if (i < current.length)
       continue;
-    yield CreateInsert(`${path3}/${i}`, next[i]);
+    yield CreateInsert(`${path2}/${i}`, next[i]);
   }
   for (let i = current.length - 1;i >= 0; i--) {
     if (i < next.length)
       continue;
-    yield CreateDelete(`${path3}/${i}`);
+    yield CreateDelete(`${path2}/${i}`);
   }
 }
-function* TypedArrayType2(path3, current, next) {
+function* TypedArrayType2(path2, current, next) {
   if (!IsTypedArray(next) || current.length !== next.length || globalThis.Object.getPrototypeOf(current).constructor.name !== globalThis.Object.getPrototypeOf(next).constructor.name)
-    return yield CreateUpdate(path3, next);
+    return yield CreateUpdate(path2, next);
   for (let i = 0;i < Math.min(current.length, next.length); i++) {
-    yield* Visit15(`${path3}/${i}`, current[i], next[i]);
+    yield* Visit15(`${path2}/${i}`, current[i], next[i]);
   }
 }
-function* ValueType2(path3, current, next) {
+function* ValueType2(path2, current, next) {
   if (current === next)
     return;
-  yield CreateUpdate(path3, next);
+  yield CreateUpdate(path2, next);
 }
-function* Visit15(path3, current, next) {
+function* Visit15(path2, current, next) {
   if (IsStandardObject(current))
-    return yield* ObjectType4(path3, current, next);
+    return yield* ObjectType4(path2, current, next);
   if (IsArray2(current))
-    return yield* ArrayType4(path3, current, next);
+    return yield* ArrayType4(path2, current, next);
   if (IsTypedArray(current))
-    return yield* TypedArrayType2(path3, current, next);
+    return yield* TypedArrayType2(path2, current, next);
   if (IsValueType(current))
-    return yield* ValueType2(path3, current, next);
+    return yield* ValueType2(path2, current, next);
   throw new ValueDiffError(current, "Unable to diff value");
 }
 function Diff(current, next) {
@@ -10417,9 +10369,9 @@ class ValueMutateError extends TypeBoxError {
     super(message);
   }
 }
-function ObjectType5(root, path3, current, next) {
+function ObjectType5(root, path2, current, next) {
   if (!IsStandardObject2(current)) {
-    exports_pointer.Set(root, path3, Clone2(next));
+    exports_pointer.Set(root, path2, Clone2(next));
   } else {
     const currentKeys = Object.getOwnPropertyNames(current);
     const nextKeys = Object.getOwnPropertyNames(next);
@@ -10434,43 +10386,43 @@ function ObjectType5(root, path3, current, next) {
       }
     }
     for (const nextKey of nextKeys) {
-      Visit16(root, `${path3}/${nextKey}`, current[nextKey], next[nextKey]);
+      Visit16(root, `${path2}/${nextKey}`, current[nextKey], next[nextKey]);
     }
   }
 }
-function ArrayType5(root, path3, current, next) {
+function ArrayType5(root, path2, current, next) {
   if (!IsArray2(current)) {
-    exports_pointer.Set(root, path3, Clone2(next));
+    exports_pointer.Set(root, path2, Clone2(next));
   } else {
     for (let index = 0;index < next.length; index++) {
-      Visit16(root, `${path3}/${index}`, current[index], next[index]);
+      Visit16(root, `${path2}/${index}`, current[index], next[index]);
     }
     current.splice(next.length);
   }
 }
-function TypedArrayType3(root, path3, current, next) {
+function TypedArrayType3(root, path2, current, next) {
   if (IsTypedArray(current) && current.length === next.length) {
     for (let i = 0;i < current.length; i++) {
       current[i] = next[i];
     }
   } else {
-    exports_pointer.Set(root, path3, Clone2(next));
+    exports_pointer.Set(root, path2, Clone2(next));
   }
 }
-function ValueType3(root, path3, current, next) {
+function ValueType3(root, path2, current, next) {
   if (current === next)
     return;
-  exports_pointer.Set(root, path3, next);
+  exports_pointer.Set(root, path2, next);
 }
-function Visit16(root, path3, current, next) {
+function Visit16(root, path2, current, next) {
   if (IsArray2(next))
-    return ArrayType5(root, path3, current, next);
+    return ArrayType5(root, path2, current, next);
   if (IsTypedArray(next))
-    return TypedArrayType3(root, path3, current, next);
+    return TypedArrayType3(root, path2, current, next);
   if (IsStandardObject2(next))
-    return ObjectType5(root, path3, current, next);
+    return ObjectType5(root, path2, current, next);
   if (IsValueType(next))
-    return ValueType3(root, path3, current, next);
+    return ValueType3(root, path2, current, next);
 }
 function IsNonMutableValue(value) {
   return IsTypedArray(value) || IsValueType(value);
@@ -11494,34 +11446,34 @@ var Memoirist = class _Memoirist {
   lazyFind = (method, url) => this.config.lazy ? (this.build(), this.find(method, url)) : this.find;
   build() {
     if (this.config.lazy) {
-      for (let [method, path3, store] of this.deferred)
-        this.add(method, path3, store, { lazy: false, ignoreHistory: true });
+      for (let [method, path2, store] of this.deferred)
+        this.add(method, path2, store, { lazy: false, ignoreHistory: true });
       this.deferred = [], this.find = (method, url) => {
         let root = this.root[method];
         return root ? matchRoute(url, url.length, root, 0, this.config.onParam) : null;
       };
     }
   }
-  add(method, path3, store, {
+  add(method, path2, store, {
     ignoreError = false,
     ignoreHistory = false,
     lazy = this.config.lazy
   } = {}) {
     if (lazy)
-      return this.find = this.lazyFind, this.deferred.push([method, path3, store]), store;
-    if (typeof path3 != "string")
+      return this.find = this.lazyFind, this.deferred.push([method, path2, store]), store;
+    if (typeof path2 != "string")
       throw new TypeError("Route path must be a string");
-    path3 === "" ? path3 = "/" : path3[0] !== "/" && (path3 = `/${path3}`);
-    let isWildcard = path3[path3.length - 1] === "*", optionalParams = path3.match(_Memoirist.regex.optionalParams);
+    path2 === "" ? path2 = "/" : path2[0] !== "/" && (path2 = `/${path2}`);
+    let isWildcard = path2[path2.length - 1] === "*", optionalParams = path2.match(_Memoirist.regex.optionalParams);
     if (optionalParams) {
-      let originalPath = path3.replaceAll("?", "");
+      let originalPath = path2.replaceAll("?", "");
       this.add(method, originalPath, store, {
         ignoreError,
         ignoreHistory,
         lazy
       });
       for (let i = 0;i < optionalParams.length; i++) {
-        let newPath = path3.replace(optionalParams[i], "");
+        let newPath = path2.replace(optionalParams[i], "");
         this.add(method, newPath, store, {
           ignoreError: true,
           ignoreHistory,
@@ -11530,10 +11482,10 @@ var Memoirist = class _Memoirist {
       }
       return store;
     }
-    if (optionalParams && (path3 = path3.replaceAll("?", "")), this.history.find(([m, p, s]) => m === method && p === path3))
+    if (optionalParams && (path2 = path2.replaceAll("?", "")), this.history.find(([m, p, s]) => m === method && p === path2))
       return store;
-    (isWildcard || optionalParams && path3.charCodeAt(path3.length - 1) === 63) && (path3 = path3.slice(0, -1)), ignoreHistory || this.history.push([method, path3, store]);
-    let inertParts = path3.split(_Memoirist.regex.static), paramParts = path3.match(_Memoirist.regex.params) || [];
+    (isWildcard || optionalParams && path2.charCodeAt(path2.length - 1) === 63) && (path2 = path2.slice(0, -1)), ignoreHistory || this.history.push([method, path2, store]);
+    let inertParts = path2.split(_Memoirist.regex.static), paramParts = path2.match(_Memoirist.regex.params) || [];
     inertParts[inertParts.length - 1] === "" && inertParts.pop();
     let node;
     this.root[method] ? node = this.root[method] : node = this.root[method] = createNode("/");
@@ -11547,7 +11499,7 @@ var Memoirist = class _Memoirist {
         else if (node.params.name !== param) {
           if (ignoreError)
             return store;
-          throw new Error(`Cannot create route "${path3}" with parameter "${param}" because a route already exists with a different parameter name ("${node.params.name}") in the same location`);
+          throw new Error(`Cannot create route "${path2}" with parameter "${param}" because a route already exists with a different parameter name ("${node.params.name}") in the same location`);
         }
         let params = node.params;
         if (params.inert === null) {
@@ -11593,7 +11545,7 @@ var Memoirist = class _Memoirist {
       else if (node.params.name !== name) {
         if (ignoreError)
           return store;
-        throw new Error(`Cannot create route "${path3}" with parameter "${name}" because a route already exists with a different parameter name ("${node.params.name}") in the same location`);
+        throw new Error(`Cannot create route "${path2}" with parameter "${name}" because a route already exists with a different parameter name ("${node.params.name}") in the same location`);
       }
       return node.params.store === null && (node.params.store = store), node.params.store;
     }
@@ -11890,17 +11842,17 @@ var mime = {
   "3gp2_DOES_NOT_CONTAIN_VIDEO": "audio/3gpp2",
   "7z": "application/x-7z-compressed"
 };
-var getFileExtension = (path3) => {
-  let index = path3.lastIndexOf(".");
-  return index === -1 ? "" : path3.slice(index + 1);
+var getFileExtension = (path2) => {
+  let index = path2.lastIndexOf(".");
+  return index === -1 ? "" : path2.slice(index + 1);
 };
 var createReadStream;
 var stat;
 var ElysiaFile = class {
-  constructor(path3) {
-    this.path = path3;
+  constructor(path2) {
+    this.path = path2;
     if (isBun)
-      this.value = Bun.file(path3);
+      this.value = Bun.file(path2);
     else {
       if (!createReadStream || !stat) {
         if (typeof window < "u") {
@@ -11927,7 +11879,7 @@ var ElysiaFile = class {
         }
         createReadStream = fs.createReadStream, stat = fs.promises.stat;
       }
-      this.value = createReadStream(path3), this.stats = stat(path3);
+      this.value = createReadStream(path2), this.stats = stat(path2);
     }
   }
   get type() {
@@ -12368,7 +12320,7 @@ var promoteEvent = (events, as = "scoped") => {
       "scope" in event && (event.scope = "global");
   }
 };
-var getLoosePath = (path3) => path3.charCodeAt(path3.length - 1) === 47 ? path3.slice(0, path3.length - 1) : path3 + "/";
+var getLoosePath = (path2) => path2.charCodeAt(path2.length - 1) === 47 ? path2.slice(0, path2.length - 1) : path2 + "/";
 var isNotEmpty = (obj) => {
   if (!obj)
     return false;
@@ -12376,8 +12328,8 @@ var isNotEmpty = (obj) => {
     return true;
   return false;
 };
-var encodePath = (path3, { dynamic = false } = {}) => {
-  let encoded = encodeURIComponent(path3).replace(/%2F/g, "/");
+var encodePath = (path2, { dynamic = false } = {}) => {
+  let encoded = encodeURIComponent(path2).replace(/%2F/g, "/");
   return dynamic && (encoded = encoded.replace(/%3A/g, ":").replace(/%3F/g, "?")), encoded;
 };
 var supportPerMethodInlineHandler = !!(typeof Bun > "u" || Bun.semver?.satisfies?.(Bun.version, ">=1.2.14"));
@@ -12448,7 +12400,7 @@ var mapValueError = (error) => {
     return {
       summary: undefined
     };
-  let { message, path: path3, value, type } = error, property = path3.slice(1).replaceAll("/", "."), isRoot = path3 === "";
+  let { message, path: path2, value, type } = error, property = path2.slice(1).replaceAll("/", "."), isRoot = path2 === "";
   switch (type) {
     case 42:
       return {
@@ -12939,7 +12891,7 @@ var ElysiaType = {
     expires,
     httpOnly,
     maxAge,
-    path: path3,
+    path: path2,
     priority,
     sameSite,
     secure,
@@ -12953,7 +12905,7 @@ var ElysiaType = {
       expires,
       httpOnly,
       maxAge,
-      path: path3,
+      path: path2,
       priority,
       sameSite,
       secure,
@@ -13085,8 +13037,8 @@ var Cookie = class {
   get path() {
     return this.cookie.path;
   }
-  set path(path3) {
-    this.setCookie.path = path3;
+  set path(path2) {
+    this.setCookie.path = path2;
   }
   get secure() {
     return this.cookie.secure;
@@ -13397,7 +13349,7 @@ var createResponseHandler = (handler) => {
 var handleElysiaFile = (file2, set2 = {
   headers: {}
 }) => {
-  let path3 = file2.path, contentType = mime[path3.slice(path3.lastIndexOf(".") + 1)];
+  let path2 = file2.path, contentType = mime[path2.slice(path2.lastIndexOf(".") + 1)];
   return contentType && (set2.headers["content-type"] = contentType), file2.stats && set2.status !== 206 && set2.status !== 304 && set2.status !== 412 && set2.status !== 416 ? file2.stats.then((stat2) => {
     let size = stat2.size;
     return size !== undefined && (set2.headers["content-range"] = `bytes 0-${size - 1}/${size}`, set2.headers["content-length"] = size), handleFile(file2.value, set2);
@@ -15660,7 +15612,7 @@ var coerceTransformDecodeError = (fnLiteral, type, value = `c.${type}`) => `try{
 throw error.error ?? new ValidationError('${type}',validator.${type},${value})}}`;
 var composeHandler = ({
   app,
-  path: path3,
+  path: path2,
   method,
   hooks,
   validator,
@@ -15695,7 +15647,7 @@ return function(){return a}`)(handler);
       return _encodeCookie;
     if (cookieMeta?.sign) {
       if (!cookieMeta.secrets)
-        throw new Error(`t.Cookie required secret which is not set in (${method}) ${path3}.`);
+        throw new Error(`t.Cookie required secret which is not set in (${method}) ${path2}.`);
       let secret = cookieMeta.secrets ? typeof cookieMeta.secrets == "string" ? cookieMeta.secrets : cookieMeta.secrets[0] : undefined;
       if (_encodeCookie += `const _setCookie = c.set.cookie
 if(_setCookie){`, cookieMeta.sign === true)
@@ -15772,7 +15724,7 @@ ${prefix2}e.afterResponse[${i}](c)
 `;
     return after ? `const _res=${response}` + after + "return _res" : `return ${response}`;
   }, mapResponseContext = maybeStream || adapter.mapResponseContext ? `,${adapter.mapResponseContext}` : "";
-  (hasTrace || inference.route) && (fnLiteral += `c.route=\`${path3}\`
+  (hasTrace || inference.route) && (fnLiteral += `c.route=\`${path2}\`
 `);
   let parseReporter = report("parse", {
     total: hooks.parse?.length
@@ -16418,10 +16370,10 @@ if(route.store.handler)return route.store.handler(c)
 return route.store.compile()(c)
 `;
   let switchMap = "";
-  for (let [path3, methods] of Object.entries(router.static)) {
-    switchMap += `case'${path3}':`, app.config.strictPath !== true && (switchMap += `case'${getLoosePath(path3)}':`);
-    let encoded = encodePath(path3);
-    path3 !== encoded && (switchMap += `case'${encoded}':`), switchMap += "switch(r.method){", (("GET" in methods) || ("WS" in methods)) && (switchMap += "case 'GET':", ("WS" in methods) && (switchMap += `if(r.headers.get('upgrade')==='websocket')return ht[${methods.WS}].composed(c)
+  for (let [path2, methods] of Object.entries(router.static)) {
+    switchMap += `case'${path2}':`, app.config.strictPath !== true && (switchMap += `case'${getLoosePath(path2)}':`);
+    let encoded = encodePath(path2);
+    path2 !== encoded && (switchMap += `case'${encoded}':`), switchMap += "switch(r.method){", (("GET" in methods) || ("WS" in methods)) && (switchMap += "case 'GET':", ("WS" in methods) && (switchMap += `if(r.headers.get('upgrade')==='websocket')return ht[${methods.WS}].composed(c)
 `, ("GET" in methods) || ("ALL" in methods ? switchMap += `return ht[${methods.ALL}].composed(c)
 ` : switchMap += `break map
 `)), ("GET" in methods) && (switchMap += `return ht[${methods.GET}].composed(c)
@@ -16741,11 +16693,11 @@ var createHandleWSResponse = (validateResponse) => {
   return handleWSResponse;
 };
 var optionalParam = /:.+?\?(?=\/|$)/;
-var getPossibleParams = (path3) => {
-  let match = optionalParam.exec(path3);
+var getPossibleParams = (path2) => {
+  let match = optionalParam.exec(path2);
   if (!match)
-    return [path3];
-  let routes = [], head = path3.slice(0, match.index), param = match[0].slice(0, -1), tail = path3.slice(match.index + match[0].length);
+    return [path2];
+  let routes = [], head = path2.slice(0, match.index), param = match[0].slice(0, -1), tail = path2.slice(match.index + match[0].length);
   routes.push(head.slice(0, -1)), routes.push(head + param);
   for (let fragment of getPossibleParams(tail))
     fragment && (fragment.startsWith("/:") || routes.push(head.slice(0, -1) + fragment), routes.push(head + param + fragment));
@@ -16765,8 +16717,8 @@ var mapRoutes = (app) => {
   if (!app.config.aot || !app.config.systemRouter)
     return;
   let routes = {}, add = (route, handler) => {
-    let path3 = encodeURI(route.path);
-    routes[path3] ? routes[path3][route.method] || (routes[path3][route.method] = handler) : routes[path3] = {
+    let path2 = encodeURI(route.path);
+    routes[path2] ? routes[path2][route.method] || (routes[path2][route.method] = handler) : routes[path2] = {
       [route.method]: handler
     };
   }, tree = app.routeTree;
@@ -16781,10 +16733,10 @@ var mapRoutes = (app) => {
       continue;
     }
     let compiled, handler = app.config.precompile ? createBunRouteHandler(app, route) : (request) => compiled ? compiled(request) : (compiled = createBunRouteHandler(app, route))(request);
-    for (let path3 of getPossibleParams(route.path))
+    for (let path2 of getPossibleParams(route.path))
       add({
         method,
-        path: path3
+        path: path2
       }, handler);
   }
   return routes;
@@ -16839,32 +16791,32 @@ for(const [k,v] of c.request.headers.entries())c.headers[k]=v
       }
       let createStaticRoute = (iterator, { withAsync = false } = {}) => {
         let staticRoutes = {}, ops = [];
-        for (let [path3, route] of Object.entries(iterator))
-          if (path3 = encodeURI(path3), supportPerMethodInlineHandler) {
+        for (let [path2, route] of Object.entries(iterator))
+          if (path2 = encodeURI(path2), supportPerMethodInlineHandler) {
             if (!route)
               continue;
             for (let [method, value] of Object.entries(route))
               if (!(!value || !(method in supportedMethods))) {
                 if (value instanceof Promise) {
-                  withAsync && (staticRoutes[path3] || (staticRoutes[path3] = {}), ops.push(value.then((awaited) => {
-                    awaited instanceof Response && (staticRoutes[path3][method] = awaited), isHTMLBundle(awaited) && (staticRoutes[path3][method] = awaited);
+                  withAsync && (staticRoutes[path2] || (staticRoutes[path2] = {}), ops.push(value.then((awaited) => {
+                    awaited instanceof Response && (staticRoutes[path2][method] = awaited), isHTMLBundle(awaited) && (staticRoutes[path2][method] = awaited);
                   })));
                   continue;
                 }
-                !(value instanceof Response) && !isHTMLBundle(value) || (staticRoutes[path3] || (staticRoutes[path3] = {}), staticRoutes[path3][method] = value);
+                !(value instanceof Response) && !isHTMLBundle(value) || (staticRoutes[path2] || (staticRoutes[path2] = {}), staticRoutes[path2][method] = value);
               }
           } else {
             if (!route)
               continue;
             if (route instanceof Promise) {
-              withAsync && (staticRoutes[path3] || (staticRoutes[path3] = {}), ops.push(route.then((awaited) => {
-                awaited instanceof Response && (staticRoutes[path3] = awaited);
+              withAsync && (staticRoutes[path2] || (staticRoutes[path2] = {}), ops.push(route.then((awaited) => {
+                awaited instanceof Response && (staticRoutes[path2] = awaited);
               })));
               continue;
             }
             if (!(route instanceof Response))
               continue;
-            staticRoutes[path3] = route;
+            staticRoutes[path2] = route;
           }
         return withAsync ? Promise.all(ops).then(() => staticRoutes) : staticRoutes;
       }, serve = typeof options == "object" ? {
@@ -16919,7 +16871,7 @@ for(const [k,v] of c.request.headers.entries())c.headers[k]=v
     } else
       console.log("Elysia isn't running. Call `app.listen` to start the server.", new Error().stack);
   },
-  ws(app, path3, options) {
+  ws(app, path2, options) {
     let { parse: parse22, body, response, ...rest } = options, validateMessage = getSchemaValidator(body, {
       modules: app.definitions.typebox,
       models: app.definitions.type,
@@ -16929,7 +16881,7 @@ for(const [k,v] of c.request.headers.entries())c.headers[k]=v
       models: app.definitions.type,
       normalize: app.config.normalize
     });
-    app.route("WS", path3, async (context) => {
+    app.route("WS", path2, async (context) => {
       let server = context.server ?? app.server, { set: set2, path: path22, qi, headers, query, params } = context;
       if (context.validator = validateResponse, options.upgrade)
         if (typeof options.upgrade == "function") {
@@ -17023,7 +16975,7 @@ var injectDefaultValues = (typeChecker, obj) => {
 var createDynamicHandler = (app) => {
   let { mapResponse: mapResponse3, mapEarlyResponse: mapEarlyResponse3 } = app["~adapter"].handler, defaultHeader = app.setHeaders;
   return async (request) => {
-    let url = request.url, s = url.indexOf("/", 11), qi = url.indexOf("?", s + 1), path3 = qi === -1 ? url.substring(s) : url.substring(s, qi), set2 = {
+    let url = request.url, s = url.indexOf("/", 11), qi = url.indexOf("?", s + 1), path2 = qi === -1 ? url.substring(s) : url.substring(s, qi), set2 = {
       cookie: {},
       status: 200,
       headers: defaultHeader ? { ...defaultHeader } : {}
@@ -17031,7 +16983,7 @@ var createDynamicHandler = (app) => {
       set: set2,
       store: app.singleton.store,
       request,
-      path: path3,
+      path: path2,
       qi,
       error: status,
       status,
@@ -17044,7 +16996,7 @@ var createDynamicHandler = (app) => {
           if (response2 instanceof Promise && (response2 = await response2), response2 = mapEarlyResponse3(response2, set2), response2)
             return context.response = response2;
         }
-      let methodKey = request.method === "GET" && request.headers.get("upgrade")?.toLowerCase() === "websocket" ? "WS" : request.method, handler = app.router.dynamic.find(request.method, path3) ?? app.router.dynamic.find(methodKey, path3) ?? app.router.dynamic.find("ALL", path3);
+      let methodKey = request.method === "GET" && request.headers.get("upgrade")?.toLowerCase() === "websocket" ? "WS" : request.method, handler = app.router.dynamic.find(request.method, path2) ?? app.router.dynamic.find(methodKey, path2) ?? app.router.dynamic.find("ALL", path2);
       if (!handler)
         throw context.query = qi === -1 ? {} : parseQuery(url.substring(qi + 1)), new NotFoundError;
       let { handle, hooks, validator, content, route } = handler.store, body;
@@ -17484,11 +17436,11 @@ var _Elysia = class _Elysia2 {
       models[name] = getSchemaValidator(this.definitions.typebox.Import(name));
     return models.modules = this.definitions.typebox, models;
   }
-  add(method, path3, handle, localHook, options) {
+  add(method, path2, handle, localHook, options) {
     let skipPrefix = options?.skipPrefix ?? false, allowMeta = options?.allowMeta ?? false;
     localHook ??= {}, this.applyMacro(localHook);
     let standaloneValidators = [];
-    if (localHook.standaloneValidator && (standaloneValidators = standaloneValidators.concat(localHook.standaloneValidator)), this.standaloneValidator.local && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.local)), this.standaloneValidator.scoped && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.scoped)), this.standaloneValidator.global && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.global)), path3 !== "" && path3.charCodeAt(0) !== 47 && (path3 = "/" + path3), this.config.prefix && !skipPrefix && (path3 = this.config.prefix + path3), localHook?.type)
+    if (localHook.standaloneValidator && (standaloneValidators = standaloneValidators.concat(localHook.standaloneValidator)), this.standaloneValidator.local && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.local)), this.standaloneValidator.scoped && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.scoped)), this.standaloneValidator.global && (standaloneValidators = standaloneValidators.concat(this.standaloneValidator.global)), path2 !== "" && path2.charCodeAt(0) !== 47 && (path2 = "/" + path2), this.config.prefix && !skipPrefix && (path2 = this.config.prefix + path2), localHook?.type)
       switch (localHook.type) {
         case "text":
           localHook.type = "text/plain";
@@ -17650,28 +17602,28 @@ var _Elysia = class _Elysia2 {
       standaloneValidator: standaloneValidators
     }), this.config.aot === false) {
       let validator = createValidator();
-      this.router.dynamic.add(method, path3, {
+      this.router.dynamic.add(method, path2, {
         validator,
         hooks,
         content: localHook?.type,
         handle,
-        route: path3
+        route: path2
       });
-      let encoded = encodePath(path3, { dynamic: true });
-      if (path3 !== encoded && this.router.dynamic.add(method, encoded, {
+      let encoded = encodePath(path2, { dynamic: true });
+      if (path2 !== encoded && this.router.dynamic.add(method, encoded, {
         validator,
         hooks,
         content: localHook?.type,
         handle,
-        route: path3
+        route: path2
       }), this.config.strictPath === false) {
-        let loosePath = getLoosePath(path3);
+        let loosePath = getLoosePath(path2);
         this.router.dynamic.add(method, loosePath, {
           validator,
           hooks,
           content: localHook?.type,
           handle,
-          route: path3
+          route: path2
         });
         let encoded2 = encodePath(loosePath);
         loosePath !== encoded2 && this.router.dynamic.add(method, loosePath, {
@@ -17679,12 +17631,12 @@ var _Elysia = class _Elysia2 {
           hooks,
           content: localHook?.type,
           handle,
-          route: path3
+          route: path2
         });
       }
       this.router.history.push({
         method,
-        path: path3,
+        path: path2,
         composed: null,
         handler: handle,
         compile: undefined,
@@ -17695,7 +17647,7 @@ var _Elysia = class _Elysia2 {
     let adapter = this["~adapter"].handler, nativeStaticHandler = typeof handle != "function" ? () => {
       let context = {
         redirect,
-        request: this["~adapter"].isWebStandard ? new Request(`http://e.ly${path3}`, {
+        request: this["~adapter"].isWebStandard ? new Request(`http://e.ly${path2}`, {
           method
         }) : undefined,
         server: null,
@@ -17731,10 +17683,10 @@ var _Elysia = class _Elysia2 {
         [method]: nativeStaticHandler()
       } : this.router.response[path22] = nativeStaticHandler());
     };
-    addResponsePath(path3);
+    addResponsePath(path2);
     let _compiled, compile2 = () => _compiled || (_compiled = composeHandler({
       app: this,
-      path: path3,
+      path: path2,
       method,
       hooks,
       validator: createValidator(),
@@ -17742,20 +17694,20 @@ var _Elysia = class _Elysia2 {
       allowMeta,
       inference: this.inference
     })), oldIndex;
-    if (`${method}_${path3}` in this.routeTree)
+    if (`${method}_${path2}` in this.routeTree)
       for (let i = 0;i < this.router.history.length; i++) {
         let route = this.router.history[i];
-        if (route.path === path3 && route.method === method) {
+        if (route.path === path2 && route.method === method) {
           oldIndex = i;
           break;
         }
       }
     else
-      this.routeTree[`${method}_${path3}`] = this.router.history.length;
+      this.routeTree[`${method}_${path2}`] = this.router.history.length;
     let index = oldIndex ?? this.router.history.length, mainHandler = shouldPrecompile ? compile2() : (ctx) => (this.router.history[index].composed = compile2())(ctx);
     oldIndex !== undefined ? this.router.history[oldIndex] = Object.assign({
       method,
-      path: path3,
+      path: path2,
       composed: mainHandler,
       compile: compile2,
       handler: handle,
@@ -17764,7 +17716,7 @@ var _Elysia = class _Elysia2 {
       standaloneValidators
     } : undefined, localHook.webSocket ? { websocket: localHook.websocket } : undefined) : this.router.history.push(Object.assign({
       method,
-      path: path3,
+      path: path2,
       composed: mainHandler,
       compile: compile2,
       handler: handle,
@@ -17775,30 +17727,30 @@ var _Elysia = class _Elysia2 {
       compile() {
         return this.handler = compile2();
       }
-    }, staticRouter = this.router.static, isStaticPath = path3.indexOf(":") === -1 && path3.indexOf("*") === -1;
+    }, staticRouter = this.router.static, isStaticPath = path2.indexOf(":") === -1 && path2.indexOf("*") === -1;
     if (method === "WS") {
       if (isStaticPath) {
-        path3 in staticRouter ? staticRouter[path3][method] = index : staticRouter[path3] = {
+        path2 in staticRouter ? staticRouter[path2][method] = index : staticRouter[path2] = {
           [method]: index
         };
         return;
       }
-      this.router.http.add("WS", path3, handler), this.config.strictPath || this.router.http.add("WS", getLoosePath(path3), handler);
-      let encoded = encodePath(path3, { dynamic: true });
-      path3 !== encoded && this.router.http.add("WS", encoded, handler);
+      this.router.http.add("WS", path2, handler), this.config.strictPath || this.router.http.add("WS", getLoosePath(path2), handler);
+      let encoded = encodePath(path2, { dynamic: true });
+      path2 !== encoded && this.router.http.add("WS", encoded, handler);
       return;
     }
     if (isStaticPath)
-      path3 in staticRouter ? staticRouter[path3][method] = index : staticRouter[path3] = {
+      path2 in staticRouter ? staticRouter[path2][method] = index : staticRouter[path2] = {
         [method]: index
-      }, this.config.strictPath || addResponsePath(getLoosePath(path3));
+      }, this.config.strictPath || addResponsePath(getLoosePath(path2));
     else {
-      if (this.router.http.add(method, path3, handler), !this.config.strictPath) {
-        let loosePath = getLoosePath(path3);
+      if (this.router.http.add(method, path2, handler), !this.config.strictPath) {
+        let loosePath = getLoosePath(path2);
         addResponsePath(loosePath), this.router.http.add(method, loosePath, handler);
       }
-      let encoded = encodePath(path3, { dynamic: true });
-      path3 !== encoded && (this.router.http.add(method, encoded, handler), addResponsePath(encoded));
+      let encoded = encodePath(path2, { dynamic: true });
+      path2 !== encoded && (this.router.http.add(method, encoded, handler), addResponsePath(encoded));
     }
   }
   headers(header) {
@@ -17957,8 +17909,8 @@ var _Elysia = class _Elysia2 {
     ]), sandbox.event.mapResponse?.length && (this.event.mapResponse = [
       ...this.event.mapResponse || [],
       ...sandbox.event.mapResponse || []
-    ]), this.model(sandbox.definitions.type), Object.values(instance.router.history).forEach(({ method, path: path3, handler, hooks }) => {
-      if (path3 = (isSchema ? "" : this.config.prefix ?? "") + prefix + path3, isSchema) {
+    ]), this.model(sandbox.definitions.type), Object.values(instance.router.history).forEach(({ method, path: path2, handler, hooks }) => {
+      if (path2 = (isSchema ? "" : this.config.prefix ?? "") + prefix + path2, isSchema) {
         let {
           body,
           headers,
@@ -17968,7 +17920,7 @@ var _Elysia = class _Elysia2 {
           response,
           ...hook
         } = schemaOrRun, localHook = hooks, hasStandaloneSchema = body || headers || query || params || cookie || response;
-        this.add(method, path3, handler, mergeHook(hook, {
+        this.add(method, path2, handler, mergeHook(hook, {
           ...localHook || {},
           error: localHook.error ? Array.isArray(localHook.error) ? [
             ...localHook.error ?? [],
@@ -17990,7 +17942,7 @@ var _Elysia = class _Elysia2 {
           ] : localHook.standaloneValidator
         }), undefined);
       } else
-        this.add(method, path3, handler, mergeHook(hooks, {
+        this.add(method, path2, handler, mergeHook(hooks, {
           error: sandbox.event.error
         }), {
           skipPrefix: true
@@ -18042,7 +17994,7 @@ var _Elysia = class _Elysia2 {
     ]), sandbox.event.mapResponse?.length && (this.event.mapResponse = [
       ...this.event.mapResponse || [],
       ...sandbox.event.mapResponse || []
-    ]), this.model(sandbox.definitions.type), Object.values(instance.router.history).forEach(({ method, path: path3, handler, hooks: localHook }) => {
+    ]), this.model(sandbox.definitions.type), Object.values(instance.router.history).forEach(({ method, path: path2, handler, hooks: localHook }) => {
       let {
         body,
         headers,
@@ -18052,7 +18004,7 @@ var _Elysia = class _Elysia2 {
         response,
         ...guardHook
       } = hook, hasStandaloneSchema = body || headers || query || params || cookie || response;
-      this.add(method, path3, handler, mergeHook(guardHook, {
+      this.add(method, path2, handler, mergeHook(guardHook, {
         ...localHook || {},
         error: localHook.error ? Array.isArray(localHook.error) ? [
           ...localHook.error ?? [],
@@ -18128,11 +18080,11 @@ var _Elysia = class _Elysia2 {
           plugin2.getServer = () => this.getServer(), plugin2.getGlobalRoutes = () => this.getGlobalRoutes(), plugin2.getGlobalDefinitions = () => this.getGlobalDefinitions(), plugin2.model(this.definitions.type), plugin2.error(this.definitions.error);
           for (let {
             method,
-            path: path3,
+            path: path2,
             handler,
             hooks
           } of Object.values(plugin2.router.history))
-            this.add(method, path3, handler, hooks, undefined);
+            this.add(method, path2, handler, hooks, undefined);
           return plugin2 === this ? undefined : (this.propagatePromiseModules(plugin2), plugin2);
         }
         return typeof plugin2 == "function" ? plugin2(this) : typeof plugin2.default == "function" ? plugin2.default(this) : this._use(plugin2);
@@ -18168,8 +18120,8 @@ var _Elysia = class _Elysia2 {
       ...this.extender.macro,
       ...plugin.extender.macro
     });
-    for (let { method, path: path3, handler, hooks } of Object.values(plugin.router.history))
-      this.add(method, path3, handler, hooks);
+    for (let { method, path: path2, handler, hooks } of Object.values(plugin.router.history))
+      this.add(method, path2, handler, hooks);
     if (name) {
       name in this.dependencies || (this.dependencies[name] = []);
       let current = seed !== undefined ? checksum(name + JSON.stringify(seed)) : 0;
@@ -18266,9 +18218,9 @@ var _Elysia = class _Elysia2 {
       }
     }
   }
-  mount(path3, handleOrConfig, config) {
-    if (path3 instanceof _Elysia2 || typeof path3 == "function" || path3.length === 0 || path3 === "/") {
-      let run = typeof path3 == "function" ? path3 : path3 instanceof _Elysia2 ? path3.compile().fetch : handleOrConfig instanceof _Elysia2 ? handleOrConfig.compile().fetch : typeof handleOrConfig == "function" ? handleOrConfig : (() => {
+  mount(path2, handleOrConfig, config) {
+    if (path2 instanceof _Elysia2 || typeof path2 == "function" || path2.length === 0 || path2 === "/") {
+      let run = typeof path2 == "function" ? path2 : path2 instanceof _Elysia2 ? path2.compile().fetch : handleOrConfig instanceof _Elysia2 ? handleOrConfig.compile().fetch : typeof handleOrConfig == "function" ? handleOrConfig : (() => {
         throw new Error("Invalid handler");
       })(), handler2 = ({ request, path: path22 }) => run(new Request(replaceUrlPath(request.url, path22), {
         method: request.method,
@@ -18297,7 +18249,7 @@ var _Elysia = class _Elysia2 {
     }
     let handle = handleOrConfig instanceof _Elysia2 ? handleOrConfig.compile().fetch : typeof handleOrConfig == "function" ? handleOrConfig : (() => {
       throw new Error("Invalid handler");
-    })(), length = path3.length - (path3.endsWith("*") ? 1 : 0), handler = ({ request, path: path22 }) => handle(new Request(replaceUrlPath(request.url, path22.slice(length) || "/"), {
+    })(), length = path2.length - (path2.endsWith("*") ? 1 : 0), handler = ({ request, path: path22 }) => handle(new Request(replaceUrlPath(request.url, path22.slice(length) || "/"), {
       method: request.method,
       headers: request.headers,
       signal: request.signal,
@@ -18310,7 +18262,7 @@ var _Elysia = class _Elysia2 {
       integrity: request.integrity,
       body: request.body
     }));
-    return this.route("ALL", path3, handler, {
+    return this.route("ALL", path2, handler, {
       parse: "none",
       ...config,
       detail: {
@@ -18320,7 +18272,7 @@ var _Elysia = class _Elysia2 {
       config: {
         mount: handle
       }
-    }), this.route("ALL", path3 + (path3.endsWith("/") ? "*" : "/*"), handler, {
+    }), this.route("ALL", path2 + (path2.endsWith("/") ? "*" : "/*"), handler, {
       parse: "none",
       ...config,
       detail: {
@@ -18332,38 +18284,38 @@ var _Elysia = class _Elysia2 {
       }
     }), this;
   }
-  get(path3, handler, hook) {
-    return this.add("GET", path3, handler, hook), this;
+  get(path2, handler, hook) {
+    return this.add("GET", path2, handler, hook), this;
   }
-  post(path3, handler, hook) {
-    return this.add("POST", path3, handler, hook), this;
+  post(path2, handler, hook) {
+    return this.add("POST", path2, handler, hook), this;
   }
-  put(path3, handler, hook) {
-    return this.add("PUT", path3, handler, hook), this;
+  put(path2, handler, hook) {
+    return this.add("PUT", path2, handler, hook), this;
   }
-  patch(path3, handler, hook) {
-    return this.add("PATCH", path3, handler, hook), this;
+  patch(path2, handler, hook) {
+    return this.add("PATCH", path2, handler, hook), this;
   }
-  delete(path3, handler, hook) {
-    return this.add("DELETE", path3, handler, hook), this;
+  delete(path2, handler, hook) {
+    return this.add("DELETE", path2, handler, hook), this;
   }
-  options(path3, handler, hook) {
-    return this.add("OPTIONS", path3, handler, hook), this;
+  options(path2, handler, hook) {
+    return this.add("OPTIONS", path2, handler, hook), this;
   }
-  all(path3, handler, hook) {
-    return this.add("ALL", path3, handler, hook), this;
+  all(path2, handler, hook) {
+    return this.add("ALL", path2, handler, hook), this;
   }
-  head(path3, handler, hook) {
-    return this.add("HEAD", path3, handler, hook), this;
+  head(path2, handler, hook) {
+    return this.add("HEAD", path2, handler, hook), this;
   }
-  connect(path3, handler, hook) {
-    return this.add("CONNECT", path3, handler, hook), this;
+  connect(path2, handler, hook) {
+    return this.add("CONNECT", path2, handler, hook), this;
   }
-  route(method, path3, handler, hook) {
-    return this.add(method.toUpperCase(), path3, handler, hook, hook?.config), this;
+  route(method, path2, handler, hook) {
+    return this.add(method.toUpperCase(), path2, handler, hook, hook?.config), this;
   }
-  ws(path3, options) {
-    return this["~adapter"].ws ? this["~adapter"].ws(this, path3, options) : console.warn("Current adapter doesn't support WebSocket"), this;
+  ws(path2, options) {
+    return this["~adapter"].ws ? this["~adapter"].ws(this, path2, options) : console.warn("Current adapter doesn't support WebSocket"), this;
   }
   state(options, name, value) {
     name === undefined ? (value = options, options = { as: "append" }, name = "") : value === undefined && (typeof options == "string" ? (value = name, name = options, options = { as: "append" }) : typeof options == "object" && (value = name, name = ""));
@@ -18727,6 +18679,7 @@ class AnimeDetailsService {
 // src/infrastructure/http/routes/anime.route.ts
 var animeRoutes = new Elysia({ prefix: "/anime" });
 animeRoutes.get("/home", async () => {
+  console.trace("qlq");
   const animeClient = await AnimeHomeService.getHomePageListAnime();
   return animeClient;
 }, {
@@ -20821,12 +20774,12 @@ function parse4(str) {
   uri2.queryKey = queryKey(uri2, uri2["query"]);
   return uri2;
 }
-function pathNames(obj, path3) {
-  const regx = /\/{2,9}/g, names = path3.replace(regx, "/").split("/");
-  if (path3.slice(0, 1) == "/" || path3.length === 0) {
+function pathNames(obj, path2) {
+  const regx = /\/{2,9}/g, names = path2.replace(regx, "/").split("/");
+  if (path2.slice(0, 1) == "/" || path2.length === 0) {
     names.splice(0, 1);
   }
-  if (path3.slice(-1) == "/") {
+  if (path2.slice(-1) == "/") {
     names.splice(names.length - 1, 1);
   }
   return names;
@@ -21325,7 +21278,7 @@ var protocol2 = Socket.protocol;
 // node_modules/socket.io-client/build/esm-debug/url.js
 var import_debug7 = __toESM(require_src(), 1);
 var debug7 = import_debug7.default("socket.io-client:url");
-function url(uri2, path3 = "", loc) {
+function url(uri2, path2 = "", loc) {
   let obj = uri2;
   loc = loc || typeof location !== "undefined" && location;
   if (uri2 == null)
@@ -21359,7 +21312,7 @@ function url(uri2, path3 = "", loc) {
   obj.path = obj.path || "/";
   const ipv6 = obj.host.indexOf(":") !== -1;
   const host = ipv6 ? "[" + obj.host + "]" : obj.host;
-  obj.id = obj.protocol + "://" + host + ":" + obj.port + path3;
+  obj.id = obj.protocol + "://" + host + ":" + obj.port + path2;
   obj.href = obj.protocol + "://" + host + (loc && loc.port === obj.port ? "" : ":" + obj.port);
   return obj;
 }
@@ -22453,8 +22406,8 @@ function lookup(uri2, opts) {
   const parsed = url(uri2, opts.path || "/socket.io");
   const source = parsed.source;
   const id = parsed.id;
-  const path3 = parsed.path;
-  const sameNamespace = cache[id] && path3 in cache[id]["nsps"];
+  const path2 = parsed.path;
+  const sameNamespace = cache[id] && path2 in cache[id]["nsps"];
   const newConnection = opts.forceNew || opts["force new connection"] || opts.multiplex === false || sameNamespace;
   let io;
   if (newConnection) {
@@ -22480,52 +22433,10 @@ Object.assign(lookup, {
 });
 
 // src/main.ts
-import path3 from "node:path";
+import path2 from "node:path";
 import fs from "node:fs";
-async function init() {
-  Bun.spawn([path3.join(process.cwd(), "plugins", "animeav1.exe")]);
-  await SQLITE`
-      CREATE TABLE IF NOT EXISTS cache (
-        id TEXT PRIMARY KEY NOT NULL,
-        value TEXT NOT NULL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-      )
-    `;
-  await SQLITE`
-      CREATE TABLE IF NOT EXISTS plugins_manifest (
-        name TEXT PRIMARY KEY NOT NULL,
-        version TEXT NOT NULL,
-        urlPage TEXT NOT NULL,
-        date_created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        filterSupportedList TEXT NOT NULL,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-      )
-    `;
-  const manifestDB = await SQLITE`SELECT * FROM plugins_manifest`;
-  if (manifestDB.length === 0) {
-    const manifest = await ManifestClient.getInstance().getManifest();
-    if (manifest) {
-      const manifestParsed = JSON.parse(manifest);
-      await SQLITE`
-          INSERT INTO plugins_manifest (
-            name,
-            version,
-            urlPage,
-            date_created,
-            filterSupportedList
-          ) VALUES (
-            ${manifestParsed.name},
-            ${manifestParsed.version},
-            ${manifestParsed.urlPage},
-            ${manifestParsed.date_created},
-            ${JSON.stringify(manifestParsed.filterSupportedList)}
-          )
-        `;
-    }
-  }
-}
-init();
-var pathPluginPort = path3.join(os.tmpdir(), "animeav1", "config.json");
+Bun.spawn([path2.join(process.cwd(), "plugins", "animeav1.exe")]);
+var pathPluginPort = path2.join(os.tmpdir(), "animeav1", "config.json");
 var config = JSON.parse(fs.readFileSync(pathPluginPort, "utf-8"));
 var port = config.port;
 var socket = lookup("http://localhost:" + port);
@@ -22543,6 +22454,44 @@ socket.on("disconnect", () => {
   console.log("❌ Disconnected from scraper server webSocket");
 });
 var cacheRepository = CacheRepository.create();
+await SQLITE`
+      CREATE TABLE IF NOT EXISTS cache (
+        id TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+      )
+    `;
+await SQLITE`
+      CREATE TABLE IF NOT EXISTS plugins_manifest (
+        name TEXT PRIMARY KEY NOT NULL,
+        version TEXT NOT NULL,
+        urlPage TEXT NOT NULL,
+        date_created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        filterSupportedList TEXT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+      )
+    `;
+var manifestDB = await SQLITE`SELECT * FROM plugins_manifest`;
+if (manifestDB.length === 0) {
+  const manifest = await sendMessage("getManifest", {});
+  if (manifest.success) {
+    await SQLITE`
+          INSERT INTO plugins_manifest (
+            name,
+            version,
+            urlPage,
+            date_created,
+            filterSupportedList
+          ) VALUES (
+            ${manifest.content.name},
+            ${manifest.content.version},
+            ${manifest.content.urlPage},
+            ${manifest.content.date_created},
+            ${JSON.stringify(manifest.content.filterSupportedList)}
+          )
+        `;
+  }
+}
 export {
   sendMessage,
   cacheRepository
