@@ -14,6 +14,8 @@ export const AnimeDetailsEntity = t.Object({
   date: t.Number(),
   genres: t.Array(t.String()),
   caps: t.Number(),
+  favorited: t.Boolean({ default: false }),
+  lastEpisode: t.Union([t.Number(), t.Null()]),
 })
 
 export type AnimeDetailsEpisode = typeof AnimeDetailsEpisodeEntity.static

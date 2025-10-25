@@ -1,9 +1,9 @@
 import { t } from 'elysia'
 export const animeHomeEntity = t.Object({
-  id: t.String(),
+  id: t.Number(),
   name: t.String(),
-  cap: t.String(),
-  url: t.String(),
+  cap: t.Number(),
+  slug: t.String(),
   urlImg: t.Union([t.String(), t.Null()]),
 })
 

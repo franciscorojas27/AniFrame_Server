@@ -1,13 +1,26 @@
 import { randomUUIDv7 } from 'bun'
 import { SQLITE } from '../../infrastructure/database/dataBaseClient.ts'
+import { AnimeDetails } from '../entities/animeDetails.entity.ts'
 
 export const AnimeRepository = {
   async findBySlug(slug: string) {
-    const result =
-      await SQLITE`SELECT * FROM animes WHERE slug = ${slug}`.values()
-    return result.length ? result[0] : null
+    const [result] = await SQLITE`SELECT * FROM animes WHERE slug = ${slug}`
+    return result ? result : null
   },
 
+  async isFavorited(animeId: number): Promise<boolean> {
+    const [result] = await SQLITE`
+      SELECT COUNT(*) FROM favorites WHERE anime_id = ${animeId}
+    `
+    return result ? Boolean(result['COUNT(*)']) : false
+  },
+
+  async getLastEpisode(animeId: number): Promise<number | null> {
+    const [result] = await SQLITE`
+      SELECT last_episode FROM activity_history WHERE anime_id = ${animeId} LIMIT 1
+    `
+    return result ? result : null
+  },
   async findEpisodesWithHistory(animeId: number, userId: number = 1) {
     const rows = await SQLITE`
       SELECT e.cap, h.watched, h.last_position_seconds
@@ -55,7 +68,9 @@ export const AnimeRepository = {
       }
     })
   },
-
+  async update(anime: AnimeDetails, slug: string) {
+    await SQLITE`UPDATE animes SET name = ${anime.name}, description = ${anime.description}, url_img = ${anime.urlImg}, status = ${anime.status}, date = ${anime.date}, genres = ${JSON.stringify(anime.genres)}, caps = ${anime.caps}, updated_at = datetime('now') WHERE slug = ${slug}`
+  },
   async insertOrUpdateHistory(
     animeId: number,
     cap: number,

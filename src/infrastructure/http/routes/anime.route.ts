@@ -1,4 +1,4 @@
-import Elysia, { t } from 'elysia'
+import Elysia, { status, t } from 'elysia'
 import { AnimeHomeService } from '../../../core/services/animeHome.service.ts'
 import {
   animeHomeEntity,
@@ -10,15 +10,42 @@ import { animeFilter } from '../../../core/entities/animeFilter.entity.ts'
 import { AnimeSearchEntity } from '../../../core/entities/animeSearch.entity.ts'
 import { AnimeSearchService } from '../../../core/services/animeSearch.service.ts'
 import {
+  AnimeDetails,
   AnimeDetailsEntity,
   AnimeDetailsEpisodeEntity,
   AnimeDetailsInvalidEntity,
 } from '../../../core/entities/animeDetails.entity.ts'
 import { AnimeDetailsService } from '../../../core/services/animeDetails.service.ts'
-import { SQLITE } from '../../database/dataBaseClient.ts'
-import { AnimeRepository } from '../../../core/repositories/anime.repository.ts'
-
+import { cacheRepository, sendMessage } from '../../../main.ts'
+import { HistoryService } from '../../../core/services/history.services.ts'
+import { AnimeScheduleService } from '../../../core/services/animeSchedule.service.ts'
 export const animeRoutes = new Elysia({ prefix: '/anime' })
+
+ 
+
+animeRoutes.get('/episodes/:slug', async ({ params: { slug } }) => {
+  const cacheKey = 'getEpisodeList-' + slug
+  const cached = await cacheRepository.get(cacheKey)
+  if (cached) {
+    try {
+      return JSON.parse(cached)
+    } catch {
+      await cacheRepository.delete(cacheKey)
+    }
+  }
+  let animeClient
+  try {
+    animeClient = await sendMessage('getEpisodeList', { slug })
+  } catch (err) {
+    throw status(500, { error: 'Failed to fetch anime list from source' })
+  }
+  if (!animeClient.success) {
+    throw status(404, { error: 'Anime home list not found' })
+  }
+
+  await cacheRepository.set(cacheKey, JSON.stringify(animeClient.content))
+  return animeClient.content
+})
 
 animeRoutes.get(
   '/home',
@@ -35,57 +62,13 @@ animeRoutes.get(
   },
 )
 animeRoutes.get(
-  '/history/:cap/:id',
-  async ({
-    request,
-    status,
-    query: { watched, seconds },
-    params: { cap, id },
-  }) => {
-    const value =
-      (await SQLITE`SELECT * FROM history WHERE user_id = 1 AND anime_id = ${id}`) as []
-    if (value.length == 0) {
-      await AnimeRepository.insertOrUpdateHistory(id, cap, 1, 0, false)
-      return status(200)
-    }
-    await AnimeRepository.insertOrUpdateHistory(id, cap, 1, seconds, watched)
-    return status(200)
-  },
-  {
-    params: t.Object({
-      cap: t.Number(),
-      id: t.Number(),
-    }),
-    query: t.Object({
-      watched: t.Boolean(),
-      seconds: t.Number(),
-    }),
-  },
-)
-animeRoutes.get(
   '/video/:slug/:cap/:id',
   async ({ params: { slug, cap, id } }) => {
     const animeVideo = await AnimeVideoService.getVideoSource(slug, cap)
-    const history = (await SQLITE`SELECT watched, last_position_seconds
-    from history`) as Array<{ watched: boolean; last_position_seconds: number }>
-    if (history.length === 0) {
-      await AnimeRepository.insertOrUpdateHistory(id, cap, 1, 0, false)
-      return {
-        result: animeVideo,
-        history: {
-          watched: false,
-          last_position_seconds: 0,
-        },
-      }
-    }
-    await SQLITE`INSERT INTO activity_history (id,user_id,anime_id,cap_number) values(${Bun.randomUUIDv7()},1,${id},${cap}) ON CONFLICT(user_id, anime_id, cap_number) DO UPDATE SET cap_number = ${cap}, updated_at = datetime('now')`
-
+    const history = await HistoryService.getHistory(id, cap)
     return {
       result: animeVideo,
-      history: {
-        watched: Boolean(history[0].watched),
-        last_position_seconds: history[0].last_position_seconds,
-      },
+      history,
     }
   },
   {
@@ -96,7 +79,7 @@ animeRoutes.get(
     }),
     response: {
       200: t.Object({
-        result: t.Array(animeVideoEntity.animeVideo),
+        result: animeVideoEntity.animeVideo,
         history: t.Object({
           watched: t.Boolean(),
           last_position_seconds: t.Number(),
@@ -107,6 +90,12 @@ animeRoutes.get(
     },
   },
 )
+
+animeRoutes.get('/schedule', async () => {
+  const schedule = await AnimeScheduleService.getSchedule()
+  return schedule
+})
+
 animeRoutes.get(
   '/search',
   async ({ query }) => {
@@ -124,7 +113,7 @@ animeRoutes.get(
   },
   {
     query: t.Object({
-      querySearch: t.String(),
+      querySearch: t.String({ default: ' ' }),
       page: t.Optional(t.Number()),
       ...animeFilter.properties,
     }),
@@ -139,6 +128,26 @@ animeRoutes.get(
   async ({ params: { slug } }) => {
     const animeDetails = await AnimeDetailsService.getAnimeDetails(slug)
     return animeDetails
+  },
+  {
+    params: t.Object({
+      slug: t.String(),
+    }),
+    response: {
+      200: t.Object({
+        details: AnimeDetailsEntity,
+        episodes: t.Array(AnimeDetailsEpisodeEntity),
+      }),
+      404: AnimeDetailsInvalidEntity,
+      500: AnimeDetailsInvalidEntity,
+    },
+  },
+)
+animeRoutes.get(
+  '/details/update/:slug',
+  async ({ params: { slug } }) => {
+    const animeClient = await AnimeDetailsService.updateAnime(slug)
+    return animeClient
   },
   {
     params: t.Object({
