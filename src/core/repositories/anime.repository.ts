@@ -19,7 +19,7 @@ export const AnimeRepository = {
     const [result] = await SQLITE`
       SELECT last_episode FROM activity_history WHERE anime_id = ${animeId} LIMIT 1
     `
-    return result ? result : null
+    return result ? result.last_episode : null
   },
   async findEpisodesWithHistory(animeId: number, userId: number = 1) {
     const rows = await SQLITE`

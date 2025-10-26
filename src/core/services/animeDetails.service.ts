@@ -5,7 +5,6 @@ import {
   AnimeDetails,
   AnimeDetailsEpisode,
 } from '../entities/animeDetails.entity.ts'
-import { SQLITE } from '../../infrastructure/database/dataBaseClient.ts'
 
 export abstract class AnimeDetailsService {
   static async getAnimeDetails(
@@ -15,6 +14,7 @@ export abstract class AnimeDetailsService {
     if (anime) {
       const episodes = await AnimeRepository.findEpisodesWithHistory(anime.id)
       const favorited = await AnimeRepository.isFavorited(anime.id)
+      const lastEpisode = await AnimeRepository.getLastEpisode(anime.id)
       return {
         details: {
           id: anime.id,
@@ -27,7 +27,7 @@ export abstract class AnimeDetailsService {
           genres: JSON.parse(anime.genres),
           caps: anime.caps,
           favorited,
-          lastEpisode: await AnimeRepository.getLastEpisode(anime.id),
+          lastEpisode,
         },
         episodes,
       }

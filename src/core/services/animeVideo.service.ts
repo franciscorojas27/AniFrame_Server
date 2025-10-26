@@ -30,7 +30,7 @@ export abstract class AnimeVideoService {
         await cacheRepository.delete(cacheKey)
       }
     }
- 
+
     let videoSource
     try {
       videoSource = await sendMessage('getAnimeStreamingLinks', {

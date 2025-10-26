@@ -2,7 +2,7 @@ import { SQLITE } from '../../infrastructure/database/dataBaseClient'
 import { AnimeRepository } from '../repositories/anime.repository'
 
 export abstract class HistoryService {
-  static async getHistory(id: number, cap: number) {
+  static async getHistoryVideo(id: number, cap: number) {
     const [history] = await SQLITE`SELECT watched,last_position_seconds
     from history WHERE anime_id = ${id} AND cap_number = ${cap}`
 

@@ -3,7 +3,7 @@ export const animeHomeEntity = t.Object({
   id: t.Number(),
   name: t.String(),
   cap: t.Number(),
-  slug: t.String(),
+  slug: t.String({ pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$' }),
   urlImg: t.Union([t.String(), t.Null()]),
 })
 
