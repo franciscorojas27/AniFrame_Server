@@ -8,7 +8,7 @@ import { initDatabase } from './infrastructure/database/initDatabase.ts'
 import { SOCKET_IO_URL } from './config/config.ts'
 import { initManifest } from './infrastructure/database/initManifest.ts'
 import { PORT, HOSTNAME } from './config/config.ts'
-// Bun.spawn([path.join(process.cwd(), 'plugins', 'animeav1.exe')])
+Bun.spawn([path.join(process.cwd(), 'plugins', 'animeav1.exe')])
 
 const pathPluginPort = path.join(os.tmpdir(), 'animeav1', 'config.json')
 const config = JSON.parse(fs.readFileSync(pathPluginPort, 'utf-8'))
