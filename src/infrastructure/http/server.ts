@@ -7,7 +7,7 @@ import { historyRoutes } from './routes/history.route.ts'
 import { favoriteRoutes } from './routes/favorite.route.ts'
 export const mainServer = new Elysia()
   .use(cors())
-  .onRequest(({ request, status }) => {
+  .onRequest(({ request }) => {
     console.log(
       `[${new Date().toISOString()}] ${request.method} ${request.url}`,
     )
@@ -18,7 +18,7 @@ export const mainServer = new Elysia()
   .use(
     cron({
       name: 'clearCache',
-      pattern: Patterns.EVERY_5_MINUTES,
+      pattern: Patterns.EVERY_10_MINUTES,
       async run(store) {
         if (
           Boolean(
@@ -30,6 +30,5 @@ export const mainServer = new Elysia()
       },
     }),
   )
-  .listen({ port: 3000, hostname: '0.0.0.0' })
 
 console.log(`Server running at http://localhost:3000`)
