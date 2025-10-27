@@ -4,7 +4,7 @@ export const AnimeSearchEntity = t.Object({
   id: t.Number(),
   name: t.String(),
   slug: t.String(),
-  urlImg: t.Union([t.String(), t.Null()]),
+  imgUrl: t.Union([t.String(), t.Null()]),
 })
 
 export type animeSearch = typeof AnimeSearchEntity.static

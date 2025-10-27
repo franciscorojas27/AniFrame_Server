@@ -41,8 +41,8 @@ export const AnimeRepository = {
 
   async insertAnime(anime: any, slug: string) {
     await SQLITE`
-      INSERT INTO animes (id, name, description, url_img, status, slug, date, genres, caps)
-      VALUES (${anime.id}, ${anime.name}, ${anime.description}, ${anime.urlImg},
+      INSERT INTO animes (id, name, description, img_url, status, slug, date, genres, caps)
+      VALUES (${anime.id}, ${anime.name}, ${anime.description}, ${anime.imgUrl},
               ${anime.status}, ${slug}, ${anime.date}, ${JSON.stringify(anime.genres)}, ${anime.caps})
     `
   },
@@ -69,7 +69,7 @@ export const AnimeRepository = {
     })
   },
   async update(anime: AnimeDetails, slug: string) {
-    await SQLITE`UPDATE animes SET name = ${anime.name}, description = ${anime.description}, url_img = ${anime.urlImg}, status = ${anime.status}, date = ${anime.date}, genres = ${JSON.stringify(anime.genres)}, caps = ${anime.caps}, updated_at = datetime('now') WHERE slug = ${slug}`
+    await SQLITE`UPDATE animes SET name = ${anime.name}, description = ${anime.description}, img_url = ${anime.imgUrl}, status = ${anime.status}, date = ${anime.date}, genres = ${JSON.stringify(anime.genres)}, caps = ${anime.caps}, updated_at = datetime('now') WHERE slug = ${slug}`
   },
   async insertOrUpdateHistory(
     animeId: number,

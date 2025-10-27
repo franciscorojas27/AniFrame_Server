@@ -9,6 +9,12 @@
     "allowJs": true,
     "strict": true,
     "outDir": "dist",
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/core/*": ["src/core/*"],
+      "@/infrastructure/*": ["src/infrastructure/*"]
+    }
   }
 }

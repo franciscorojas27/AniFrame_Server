@@ -1,4 +1,4 @@
-import { SQLITE } from "./dataBaseClient"
+import { SQLITE } from './dataBaseClient'
 
 export async function initDatabase() {
   await SQLITE`PRAGMA foreign_keys = ON`
@@ -18,7 +18,7 @@ export async function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             description TEXT NOT NULL,
-            url_img TEXT NOT NULL,
+            img_url TEXT NOT NULL,
             status TEXT NOT NULL,
             slug TEXT NOT NULL,
             date INTEGER NOT NULL,

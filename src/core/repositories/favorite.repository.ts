@@ -1,5 +1,5 @@
 import { randomUUIDv7 } from 'bun'
-import { SQLITE } from '../../infrastructure/database/dataBaseClient'
+import { SQLITE } from '@/infrastructure/database/dataBaseClient'
 import { mapRowFast } from '../../shared/libs/mapRow'
 import { favorite, favoriteEntity } from '../entities/favorite.entity'
 
@@ -15,10 +15,10 @@ export const FavoriteRepository = {
     return rows.map((row: favorite) => mapRowFast(row, db, favoriteEntity))
   },
   async create(body: favorite) {
-    const { animeId, name, slug, imgUrl } = body
-    await SQLITE`INSERT INTO favorites (id,user_id,anime_id, name, slug, img_url) VALUES (${randomUUIDv7()},"1", ${animeId}, ${name}, ${slug}, ${imgUrl}) `
+    const { id, name, slug, imgUrl } = body
+    await SQLITE`INSERT INTO favorites (id,user_id,anime_id, name, slug, img_url) VALUES (${randomUUIDv7()},"1", ${id}, ${name}, ${slug}, ${imgUrl}) `
   },
   async delete(id: Number) {
-    return await SQLITE`DELETE FROM favorites WHERE id = ${id}`
+    return await SQLITE`DELETE FROM favorites WHERE anime_id = ${id}`
   },
 }

@@ -46,4 +46,27 @@ export abstract class AnimeVideoService {
     await cacheRepository.set(cacheKey, JSON.stringify(videoSource.content[0]))
     return videoSource.content[0]
   }
+  static async getEpisodes(slug: string) {
+    const cacheKey = 'getEpisodeList-' + slug
+    const cached = await cacheRepository.get(cacheKey)
+    if (cached) {
+      try {
+        return JSON.parse(cached)
+      } catch {
+        await cacheRepository.delete(cacheKey)
+      }
+    }
+    let animeClient
+    try {
+      animeClient = await sendMessage('getEpisodeList', { slug })
+    } catch (err) {
+      throw status(500, { error: 'Failed to fetch anime list from source' })
+    }
+    if (!animeClient.success) {
+      throw status(404, { error: 'Anime home list not found' })
+    }
+
+    await cacheRepository.set(cacheKey, JSON.stringify(animeClient.content))
+    return animeClient.content
+  }
 }

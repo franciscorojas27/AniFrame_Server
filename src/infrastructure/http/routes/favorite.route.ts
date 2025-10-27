@@ -1,23 +1,20 @@
 import Elysia, { t } from 'elysia'
-import { SQLITE } from '../../database/dataBaseClient.ts'
-import { randomUUIDv7 } from 'bun'
-import { AnimeRepository } from '../../../core/repositories/anime.repository.ts'
-import { FavoriteRepository } from '../../../core/repositories/favorite.repository.ts'
+import { FavoriteRepository } from '@/core/repositories/favorite.repository.ts'
 import {
   favoriteEntity,
   favoriteInvalid,
-} from '../../../core/entities/favorite.entity.ts'
+} from '@/core/entities/favorite.entity.ts'
 
 export const favoriteRoutes = new Elysia({ prefix: '/favorite' })
   .get(
     '/',
-    async () => {
+    async ({ status }) => {
       try {
         const value = await FavoriteRepository.get()
-        if (!value) return { error: 'Not Found' }
+        if (!value) throw status(404, { error: 'Not Found' })
         return value
       } catch (error) {
-        return { error: 'Server Error' }
+        throw status(500, { error: 'Server Error' })
       }
     },
     {
@@ -35,7 +32,7 @@ export const favoriteRoutes = new Elysia({ prefix: '/favorite' })
         await FavoriteRepository.create(body)
         return status(201, { success: true, message: 'Favorite created' })
       } catch (error) {
-        return { error: 'Server Error' }
+        throw status(500, { error: 'Server Error' })
       }
     },
     {
@@ -46,6 +43,7 @@ export const favoriteRoutes = new Elysia({ prefix: '/favorite' })
           message: t.String(),
         }),
         400: favoriteInvalid,
+        500: favoriteInvalid,
       },
     },
   )
@@ -57,7 +55,7 @@ export const favoriteRoutes = new Elysia({ prefix: '/favorite' })
         await FavoriteRepository.delete(id)
         return status(204)
       } catch (error) {
-        return status(500)
+        throw status(500)
       }
     },
     {
@@ -66,4 +64,3 @@ export const favoriteRoutes = new Elysia({ prefix: '/favorite' })
       }),
     },
   )
-  

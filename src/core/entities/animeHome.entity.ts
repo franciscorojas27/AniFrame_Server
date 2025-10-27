@@ -4,7 +4,7 @@ export const animeHomeEntity = t.Object({
   name: t.String(),
   cap: t.Number(),
   slug: t.String({ pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$' }),
-  urlImg: t.Union([t.String(), t.Null()]),
+  imgUrl: t.Union([t.String(), t.Null()]),
 })
 
 export type animeHome = typeof animeHomeEntity.static

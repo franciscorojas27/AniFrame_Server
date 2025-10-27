@@ -20,7 +20,7 @@ export abstract class AnimeDetailsService {
           id: anime.id,
           name: anime.name,
           description: anime.description,
-          urlImg: anime.url_img,
+          imgUrl: anime.img_url,
           status: anime.status,
           slug: anime.slug,
           date: anime.date,

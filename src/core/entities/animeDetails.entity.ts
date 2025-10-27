@@ -7,7 +7,7 @@ export const AnimeDetailsEpisodeEntity = t.Object({
 export const AnimeDetailsEntity = t.Object({
   id: t.Number(),
   name: t.String(),
-  urlImg: t.Union([t.String(), t.Null()]),
+  imgUrl: t.Union([t.String(), t.Null()]),
   description: t.Union([t.String(), t.Null()]),
   slug: t.String(),
   status: t.String(),

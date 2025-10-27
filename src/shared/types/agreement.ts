@@ -3,7 +3,7 @@ import { WeekDay, AnimeScheduleItem, animeCatalog } from "./anime.ts";
 export type AnimeDetails = {
   idAnime: string | undefined;
   name: string;
-  urlImg: string | null;
+  imgUrl: string | null;
   description: string | null;
   status: string;
   date: string;

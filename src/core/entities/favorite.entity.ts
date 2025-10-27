@@ -1,6 +1,6 @@
 import { t } from 'elysia'
 export const favoriteEntity = t.Object({
-  animeId: t.Number(),
+  id: t.Number(),
   name: t.String(),
   slug: t.String(),
   imgUrl: t.String(),

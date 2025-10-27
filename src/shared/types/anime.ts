@@ -2,7 +2,7 @@ export type animeCatalog = {
   animeId: string;
   name: string;
   url: string;
-  urlImg: string | null;
+  imgUrl: string | null;
 };
 
 export interface AnimeScheduleItem {

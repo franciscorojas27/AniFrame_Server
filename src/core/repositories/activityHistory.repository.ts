@@ -1,9 +1,5 @@
-import { SQLITE } from '../../infrastructure/database/dataBaseClient'
-import {
-  history,
-  historyEntity,
-  historyInvalid,
-} from '../../core/entities/history.entity.ts'
+import { SQLITE } from '@/infrastructure/database/dataBaseClient'
+import { history } from '@/core/entities/history.entity.ts'
 
 export const ActivityHistoryRepository = {
   async getHistory(): Promise<history[]> {

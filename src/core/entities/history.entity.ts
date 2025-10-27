@@ -1,5 +1,6 @@
 import { t } from 'elysia'
 export const historyEntity = t.Object({
+  anime_id: t.Number(),
   name: t.String(),
   slug: t.String(),
   img_url: t.String(),

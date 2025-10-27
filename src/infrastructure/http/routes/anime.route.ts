@@ -1,49 +1,28 @@
-import Elysia, { status, t } from 'elysia'
-import { AnimeHomeService } from '../../../core/services/animeHome.service.ts'
+import Elysia, { t } from 'elysia'
+import { AnimeHomeService } from '@/core/services/animeHome.service.ts'
 import {
   animeHomeEntity,
   animeHomeInvalid,
-} from '../../../core/entities/animeHome.entity.ts'
-import { animeVideoEntity } from '../../../core/entities/animeVideo.entity.ts'
-import { AnimeVideoService } from '../../../core/services/animeVideo.service.ts'
-import { animeFilter } from '../../../core/entities/animeFilter.entity.ts'
-import { AnimeSearchEntity } from '../../../core/entities/animeSearch.entity.ts'
-import { AnimeSearchService } from '../../../core/services/animeSearch.service.ts'
+} from '@/core/entities/animeHome.entity.ts'
+import { animeVideoEntity } from '@/core/entities/animeVideo.entity.ts'
+import { AnimeVideoService } from '@/core/services/animeVideo.service.ts'
+import { animeFilter } from '@/core/entities/animeFilter.entity.ts'
+import { AnimeSearchEntity } from '@/core/entities/animeSearch.entity.ts'
+import { AnimeSearchService } from '@/core/services/animeSearch.service.ts'
 import {
   AnimeDetailsEntity,
   AnimeDetailsEpisodeEntity,
   AnimeDetailsInvalidEntity,
-} from '../../../core/entities/animeDetails.entity.ts'
-import { AnimeDetailsService } from '../../../core/services/animeDetails.service.ts'
-import { cacheRepository, sendMessage } from '../../../main.ts'
-import { HistoryService } from '../../../core/services/history.services.ts'
-import { AnimeScheduleService } from '../../../core/services/animeSchedule.service.ts'
-import { AnimeRepository } from '../../../core/repositories/anime.repository.ts'
+} from '@/core/entities/animeDetails.entity.ts'
+import { AnimeDetailsService } from '@/core/services/animeDetails.service.ts'
+import { HistoryService } from '@/core/services/history.services.ts'
+import { AnimeScheduleService } from '@/core/services/animeSchedule.service.ts'
+import { AnimeRepository } from '@/core/repositories/anime.repository.ts'
 export const animeRoutes = new Elysia({ prefix: '/anime' })
 
 animeRoutes
   .get('/episodes/:slug', async ({ params: { slug } }) => {
-    const cacheKey = 'getEpisodeList-' + slug
-    const cached = await cacheRepository.get(cacheKey)
-    if (cached) {
-      try {
-        return JSON.parse(cached)
-      } catch {
-        await cacheRepository.delete(cacheKey)
-      }
-    }
-    let animeClient
-    try {
-      animeClient = await sendMessage('getEpisodeList', { slug })
-    } catch (err) {
-      throw status(500, { error: 'Failed to fetch anime list from source' })
-    }
-    if (!animeClient.success) {
-      throw status(404, { error: 'Anime home list not found' })
-    }
-
-    await cacheRepository.set(cacheKey, JSON.stringify(animeClient.content))
-    return animeClient.content
+    return await AnimeVideoService.getEpisodes(slug)
   })
   .get(
     '/home',
