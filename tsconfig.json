@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "types": ["bun-types"],
+    "types": [
+      "bun-types"
+    ],
     "target": "ESNext",
     "allowImportingTsExtensions": true,
     "noEmit": true,
@@ -13,9 +15,15 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@/core/*": ["src/core/*"],
-      "@/infrastructure/*": ["src/infrastructure/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@/core/*": [
+        "src/core/*"
+      ],
+      "@/infrastructure/*": [
+        "src/infrastructure/*"
+      ]
     }
   }
 }
