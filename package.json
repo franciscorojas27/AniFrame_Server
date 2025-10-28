@@ -9,7 +9,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "bun --watch src/main.ts",
-    "debug": "bun --inspect=localhost:4000 --watch src/main.ts"
+    "debug": "bun --inspect=localhost:4000 --watch src/main.ts",
+    "build": "bun build --outdir=dist src/main.ts --production --minify --target=bun",
+    "build:windows": "bun build --compile --outfile=AniFrame_Server src/main.ts",
+    "start": "bun dist/main.js"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
